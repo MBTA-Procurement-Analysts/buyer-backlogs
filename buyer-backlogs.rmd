@@ -1,0 +1,28 @@
+---
+output: html_document
+---
+```{r include=FALSE}
+source("./buyer-backlogs.r")
+```
+```{r echo=FALSE}
+kable(backlog_kable) %>% 
+  kable_styling() %>% 
+  add_header_above(c(" " = 1, "Actionable" = 4, "On Hold" = 1, "Out-to-Bid" = 1, " " = 1)) %>% 
+  group_rows(index = c("Inventory" = 7, "Non-Inventory" = 6, "Sourcing Exec." = 4, "SWC" = 2, "Total" = 1)) %>% 
+  row_spec(c(7,13,17,19), italic = TRUE, background = "#EEEEEE") %>% 
+  row_spec(20, bold = TRUE)
+```
+<P style="page-break-before: always">
+```{r echo=FALSE, fig.width=10}
+ggplotly(ggplot(backlog_plot) + 
+  geom_bar(mapping = aes(x = Buyer, y = Count, fill = Type), 
+           stat = "identity", 
+           position = position_stack(reverse = TRUE)) +
+  scale_fill_brewer(palette = "Spectral", direction = -1) +
+  coord_flip()) %>%  
+  layout(yaxis = list(autorange = "reversed"))
+```
+
+Using data obtained on `r data_date`.
+
+Filtering with approval date from `r date_from` to `r date_to`.
