@@ -19,27 +19,25 @@ library(knitr)
 library(DT)
 library(plotly)
 
-backlog_raw <- readxl::read_excel("data/MB_REQ_HOLD_REQS_NOT_SOURCED_1960846549_08282018.xlsx", skip = 1)
+backlog_raw <- readxl::read_excel("data/MB_REQ_HOLD_REQS_NOT_SOURCED_1401443629_08302018.xlsx", skip = 1)
 
 # date of data download from fmis
-data_date <- ymd("2018-08-28")
+data_date <- ymd("2018-08-30")
 
 # Constant Definitions ----------------------------------------------------
 
 sourcing_execs <- tibble(Category = "SE", 
-                         Buyer = c("AFLYNN", "TDIONNE", "MBERNSTEIN"))
+                         Buyer = c("AFLYNN", "TDIONNE", "MBERNSTEIN", "ECOOK", "EWELSH", "RWEINER"))
 
 inventory_buyers <- tibble(Category = "INV", 
                            Buyer = c("AKNOBEL", "DMARTINOS", "KLOVE", "PHONG", "TSULLIVAN1", "NSEQUEA"))
 
 non_inventory_buyers <- tibble(Category = "NINV", 
-                               Buyer = c("CFRANCIS", "JKIDD", "JLEBBOSSIERE", "KHALL", "WRUFFIN"))
+                               Buyer = c("CFRANCIS", "JKIDD", "JLEBBOSSIERE", "KHALL", "WRUFFIN", "TTOUSSAINT"))
 
-swc_buyers <- tibble(Category = "SWC", 
-                     Buyer = c("TTOUSSAINT"))
 
 # Tibble of Buyers and their Categories
-buyers_cat<- bind_rows(sourcing_execs, inventory_buyers, non_inventory_buyers, swc_buyers)
+buyers_cat<- bind_rows(sourcing_execs, inventory_buyers, non_inventory_buyers)
 
 # Date to be used as Today. Use the dynamic definition unless otherwise needed.
 date_now <- today()
@@ -97,9 +95,9 @@ backlog_out_to_bid <- backlog_raw %>%
 
 # DF/Tibble -> Tibble; Bins the Age for the incoming dataframe
 age.binning.hard <- function(data) {
-  data %>%  mutate(Bins = if_else((Age >= 0 & Age < 5), 0,
-                                  if_else((Age >= 5 & Age < 20), 5, 
-                                          if_else((Age >= 20 & Age < 50), 20, 50))))
+  data %>%  mutate(Bins = if_else((Age >= 0 & Age < 30), 0,
+                                  if_else((Age >= 30 & Age < 60), 30, 
+                                          if_else((Age >= 60 & Age < 90), 60, 90))))
 }
 
 # DF/Tibble -> Tibble; Sums bins and spread them into columns. Does not
@@ -115,7 +113,7 @@ bin.counts.hard <- function(data) {
 backlog_bins_nohold <- backlog_nohold %>% 
   age.binning.hard() %>% 
   bin.counts.hard() %>% 
-  rename(`0 to 5` = `0`, `5 to 20` = `5`, `20 to 50` = `20`, `50+` = `50`)
+  rename(`0 to 30` = `0`, `30 to 60` = `30`, `60 to 90` = `60`, `90+` = `90`)
 
 backlog_cnt_hold <- backlog_hold %>% 
   group_by(Buyer) %>% 
@@ -128,7 +126,7 @@ backlog_cnt_out_to_bid <- backlog_out_to_bid %>%
 backlog_all_table <- full_join(backlog_bins_nohold, backlog_cnt_hold, by = "Buyer") %>% 
   full_join(., backlog_cnt_out_to_bid, by = "Buyer") %>% 
   replace(is.na(.), 0) %>% 
-  mutate(Total = `0 to 5` + `5 to 20` + `20 to 50` + `50+` + `Hold Count` + `Out-to-Bid Count`) %>% 
+  mutate(Total = `0 to 30` + `30 to 60` + `60 to 90` + `90+` + `Hold Count` + `Out-to-Bid Count`) %>% 
   left_join(., buyers_cat, by = "Buyer") %>% 
   select(Category, everything()) %>% 
   arrange(Category, Buyer)
@@ -147,14 +145,12 @@ backlog_total_kable <- backlog_subtotal_kable %>%
   select(Category, Buyer, everything())
 
 backlog_kable <- bind_rows(
-  filter(backlog_all_table, Category == "INV"),
-  filter(backlog_subtotal_kable, Category == "INV"),
   filter(backlog_all_table, Category == "NINV"),
   filter(backlog_subtotal_kable, Category == "NINV"),
   filter(backlog_all_table, Category == "SE"),
   filter(backlog_subtotal_kable, Category == "SE"),
-  filter(backlog_all_table, Category == "SWC"),
-  filter(backlog_subtotal_kable, Category == "SWC"), backlog_total_kable) %>% 
+  filter(backlog_all_table, Category == "INV"),
+  filter(backlog_subtotal_kable, Category == "INV"), backlog_total_kable) %>% 
   select(-Category)
 
 
@@ -174,5 +170,3 @@ backlog_plot <- full_join(full_join(backlog_out_to_bid, backlog_not_out_to_bid, 
   rename(`Out-To-Bid` = `OtBCnt`, `Actionable` = `NOtBCnt`, `On Hold` = `OnHoldCnt`) %>% 
   gather(Type, Count, -Buyer, -Category) %>%
   arrange(Category, desc(Buyer))
-
-         

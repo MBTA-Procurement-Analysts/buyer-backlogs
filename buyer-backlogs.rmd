@@ -1,6 +1,7 @@
 ---
 output: html_document
 ---
+
 ```{r include=FALSE}
 source("./buyer-backlogs.r")
 ```
@@ -8,9 +9,9 @@ source("./buyer-backlogs.r")
 kable(backlog_kable) %>% 
   kable_styling() %>% 
   add_header_above(c(" " = 1, "Actionable" = 4, "On Hold" = 1, "Out-to-Bid" = 1, " " = 1)) %>% 
-  group_rows(index = c("Inventory" = 7, "Non-Inventory" = 6, "Sourcing Exec." = 4, "SWC" = 2, "Total" = 1)) %>% 
-  row_spec(c(7,13,17,19), italic = TRUE, background = "#EEEEEE") %>% 
-  row_spec(20, bold = TRUE)
+  group_rows(index = c("Non-Inventory" = 7, "Sourcing Exec." = 7, "Inventory" = 7, "Total" = 1)) %>% 
+  row_spec(c(7,14,21), italic = TRUE, background = "#EEEEEE") %>% 
+  row_spec(22, bold = TRUE)
 ```
 <P style="page-break-before: always">
 ```{r echo=FALSE, fig.width=10}
