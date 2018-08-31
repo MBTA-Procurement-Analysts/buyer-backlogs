@@ -16,12 +16,24 @@ kable(backlog_kable) %>%
 <P style="page-break-before: always">
 ```{r echo=FALSE, fig.width=10}
 ggplotly(ggplot(backlog_plot) + 
-  geom_bar(mapping = aes(x = Buyer, y = Count, fill = Type), 
-           stat = "identity", 
-           position = position_stack(reverse = TRUE)) +
-  scale_fill_brewer(palette = "Spectral", direction = -1) +
-  coord_flip()) %>%  
+           geom_bar(mapping = aes(x = Buyer, y = Count, fill = Type), 
+                    stat = "identity", 
+                    position = position_stack(reverse = TRUE)) +
+           scale_fill_brewer(palette = "Spectral", direction = -1) +
+           coord_flip()) %>%  
   layout(yaxis = list(autorange = "reversed"))
+
+backlog_plot %>% split(backlog_plot$Category) %>%
+  map(plot_ly, 
+      y = ~Buyer, 
+      x = ~Count, 
+      color = ~Type, 
+      type = "bar", 
+      colors = c(
+        "#99D594","#FFFFBF", "#FC8D59"),
+      legendgroup = ~Type) %>% 
+  map(layout, yaxis = list(autorange = "reversed"), barmode = 'stack') %>% 
+  subplot(nrows = 3, margin = .05, shareX = TRUE)
 ```
 
 Using data obtained on `r data_date`.

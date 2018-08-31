@@ -16,8 +16,9 @@ library(kableExtra)
 library(readxl)
 library(lubridate)
 library(knitr)
-library(DT)
 library(plotly)
+library(scales)
+library(RColorBrewer)
 
 backlog_raw <- readxl::read_excel("data/MB_REQ_HOLD_REQS_NOT_SOURCED_1401443629_08302018.xlsx", skip = 1)
 
@@ -35,6 +36,8 @@ inventory_buyers <- tibble(Category = "INV",
 non_inventory_buyers <- tibble(Category = "NINV", 
                                Buyer = c("CFRANCIS", "JKIDD", "JLEBBOSSIERE", "KHALL", "WRUFFIN", "TTOUSSAINT"))
 
+# Buyer Category Factors, for ordering
+buyer_cat_fct <- c("NINV", "SE", "INV")
 
 # Tibble of Buyers and their Categories
 buyers_cat<- bind_rows(sourcing_execs, inventory_buyers, non_inventory_buyers)
@@ -81,7 +84,8 @@ backlog_raw <- backlog_raw %>%
   full_join(., buyers_cat, by = "Buyer") %>% 
   na.rm.at(Buyer) %>% 
   na.rm.at(Category) %>% 
-  filter(`Date of Approval` >= date_from & `Date of Approval` <= date_to)
+  filter(`Date of Approval` >= date_from & `Date of Approval` <= date_to) %>% 
+  mutate_at("Category", ~parse_factor(., levels = buyer_cat_fct))
 
 # Split on hold from non-hold ones
 backlog_nohold <- backlog_raw %>%
@@ -166,6 +170,17 @@ backlog_plot <- full_join(full_join(backlog_out_to_bid, backlog_not_out_to_bid, 
                           backlog_on_hold, by = "Buyer") %>% 
   replace(is.na(.), 0) %>% 
   full_join(.,buyers_cat, by = "Buyer") %>% 
+  mutate_at("Category", ~parse_factor(., levels = buyer_cat_fct)) %>% 
+  select(Buyer, Category, everything()) %>% 
+  rename(`Out-To-Bid` = `OtBCnt`, `Actionable` = `NOtBCnt`, `On Hold` = `OnHoldCnt`) %>% 
+  gather(Type, Count, -Buyer, -Category) %>%
+  arrange(Category, desc(Buyer))
+
+backlog_plot_90dayplus <- full_join(full_join(backlog_out_to_bid, backlog_not_out_to_bid, by = "Buyer"), 
+                          backlog_on_hold, by = "Buyer") %>% 
+  replace(is.na(.), 0) %>% 
+  full_join(.,buyers_cat, by = "Buyer") %>% 
+  mutate_at("Category", ~parse_factor(., levels = buyer_cat_fct)) %>% 
   select(Buyer, Category, everything()) %>% 
   rename(`Out-To-Bid` = `OtBCnt`, `Actionable` = `NOtBCnt`, `On Hold` = `OnHoldCnt`) %>% 
   gather(Type, Count, -Buyer, -Category) %>%
