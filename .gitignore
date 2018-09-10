@@ -1,5 +1,10 @@
-/data
+# automatic things
 /.vscode
-*.xlsx
 .Rhistory
+*.log
+
+# inputs and outputs
+/data
+*.xlsx
 *.html
+/output

@@ -4,7 +4,47 @@ output: html_document
 
 ```{r include=FALSE}
 source("./buyer-backlogs.r")
+source("./buyer-backlogs-90dayplus.r")
+source("./buyer-backlogs-amounts.r")
 ```
+# Buyer Backlog Report of `r data_date`
+
+## Backlog Count by Categories
+
+### All Reqs
+
+```{r echo=FALSE, fig.width=10}
+
+backlog_plot %>% split(backlog_plot$Category) %>%
+  map(plot_ly, 
+      y = ~Buyer, 
+      x = ~Count, 
+      color = ~Type, 
+      type = "bar", 
+      colors = c("#99D594","#FFFFBF","#FC8D59"),
+      legendgroup = ~Type) %>% 
+  map(layout, yaxis = list(autorange = "reversed"), barmode = 'stack') %>% 
+  subplot(nrows = 3, margin = .05, shareX = TRUE)
+```
+
+### Reqs Over 90 Days 
+
+```{r echo=FALSE, fig.width=10}
+
+backlog_plot_90dayplus %>% split(backlog_plot_90dayplus$Category) %>%
+  map(plot_ly, 
+      y = ~Buyer, 
+      x = ~Count, 
+      color = ~Type, 
+      type = "bar", 
+      colors = c("#99D594","#FFFFBF","#FC8D59"),
+      legendgroup = ~Type) %>% 
+  map(layout, yaxis = list(autorange = "reversed"), barmode = 'stack') %>% 
+  subplot(nrows = 3, margin = .05, shareX = TRUE)
+```
+<P style="page-break-before: always">
+
+## All Backlog, By Req Age
 ```{r echo=FALSE}
 kable(backlog_kable) %>% 
   kable_styling() %>% 
@@ -14,28 +54,17 @@ kable(backlog_kable) %>%
   row_spec(22, bold = TRUE)
 ```
 <P style="page-break-before: always">
-```{r echo=FALSE, fig.width=10}
-ggplotly(ggplot(backlog_plot) + 
-           geom_bar(mapping = aes(x = Buyer, y = Count, fill = Type), 
-                    stat = "identity", 
-                    position = position_stack(reverse = TRUE)) +
-           scale_fill_brewer(palette = "Spectral", direction = -1) +
-           coord_flip()) %>%  
-  layout(yaxis = list(autorange = "reversed"))
 
-backlog_plot %>% split(backlog_plot$Category) %>%
-  map(plot_ly, 
-      y = ~Buyer, 
-      x = ~Count, 
-      color = ~Type, 
-      type = "bar", 
-      colors = c(
-        "#99D594","#FFFFBF", "#FC8D59"),
-      legendgroup = ~Type) %>% 
-  map(layout, yaxis = list(autorange = "reversed"), barmode = 'stack') %>% 
-  subplot(nrows = 3, margin = .05, shareX = TRUE)
+## Backlog older than 90 days, By Req Amount
+
+```{r echo=FALSE}
+kable(backlog_amount_kable) %>% 
+  kable_styling() %>% 
+  add_header_above(c(" " = 1, "Actionable" = 3, "On Hold" = 1, "Out-to-Bid" = 1, " " = 1)) %>% 
+  group_rows(index = c("Non-Inventory" = 6, "Sourcing Exec." = 4, "Inventory" = 5, "Total" = 1)) %>% 
+  row_spec(c(6,10,15), italic = TRUE, background = "#EEEEEE") %>% 
+  row_spec(16, bold = TRUE)
 ```
 
-Using data obtained on `r data_date`.
 
-Filtering with approval date from `r date_from` to `r date_to`.
+Using data obtained on `r data_date`.

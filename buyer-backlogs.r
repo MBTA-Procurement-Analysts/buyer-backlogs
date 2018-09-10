@@ -9,7 +9,7 @@
 
 # Init, Library, and File Imports -----------------------------------------
 
-setwd("C:/Users/nguo/Documents/github/buyer-backlogs/")
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 library(tidyverse)
 library(kableExtra)
@@ -20,21 +20,22 @@ library(plotly)
 library(scales)
 library(RColorBrewer)
 
-backlog_raw <- readxl::read_excel("data/MB_REQ_HOLD_REQS_NOT_SOURCED_1401443629_08302018.xlsx", skip = 1)
+# backlog_raw <- readxl::read_excel("data/MB_REQ_HOLD_REQS_NOT_SOURCED_1401443629_08302018.xlsx", skip = 1)
+backlog_raw <- readxl::read_excel("data/collections/MB_REQ_HOLD_REQS_NOT_SOURCED_738843288_091082018_1413-noname.xlsx", skip = 1)
 
 # date of data download from fmis
-data_date <- ymd("2018-08-30")
+data_date <- ymd("2018-09-10")
 
 # Constant Definitions ----------------------------------------------------
 
 sourcing_execs <- tibble(Category = "SE", 
-                         Buyer = c("AFLYNN", "TDIONNE", "MBERNSTEIN", "ECOOK", "EWELSH", "RWEINER"))
+                         Buyer = c("AF", "TD", "MB", "EC", "EW", "RW"))
 
 inventory_buyers <- tibble(Category = "INV", 
-                           Buyer = c("AKNOBEL", "DMARTINOS", "KLOVE", "PHONG", "TSULLIVAN1", "NSEQUEA"))
+                           Buyer = c("AK", "DM", "KL", "PH", "TS", "NS"))
 
 non_inventory_buyers <- tibble(Category = "NINV", 
-                               Buyer = c("CFRANCIS", "JKIDD", "JLEBBOSSIERE", "KHALL", "WRUFFIN", "TTOUSSAINT"))
+                               Buyer = c("CF", "JK", "JL", "KH", "WR", "TT"))
 
 # Buyer Category Factors, for ordering
 buyer_cat_fct <- c("NINV", "SE", "INV")
@@ -47,7 +48,7 @@ date_now <- today()
 # date_now <- ymd("2018-08-24")
 
 # FROM date of the filtering
-date_from <- ymd("2017-07-01")
+date_from <- ymd("2000-01-01")
 
 # TO date of the filtering
 date_to <- ymd("2019-06-30")
@@ -99,9 +100,14 @@ backlog_out_to_bid <- backlog_raw %>%
 
 # DF/Tibble -> Tibble; Bins the Age for the incoming dataframe
 age.binning.hard <- function(data) {
-  data %>%  mutate(Bins = if_else((Age >= 0 & Age < 30), 0,
+  data %>% mutate(Bins = if_else((Age >= 0 & Age < 30), 0,
                                   if_else((Age >= 30 & Age < 60), 30, 
                                           if_else((Age >= 60 & Age < 90), 60, 90))))
+}
+
+amount.binning.hard <- function(data) {
+  data %>% mutate(Bins = if_else((`Req Total` >= 0 & `Req Total` < 250000), 0,
+                                 if_else((`Req Total` >= 250000 & `Req Total` < 500000), 250000, 500000)))
 }
 
 # DF/Tibble -> Tibble; Sums bins and spread them into columns. Does not
@@ -118,6 +124,7 @@ backlog_bins_nohold <- backlog_nohold %>%
   age.binning.hard() %>% 
   bin.counts.hard() %>% 
   rename(`0 to 30` = `0`, `30 to 60` = `30`, `60 to 90` = `60`, `90+` = `90`)
+
 
 backlog_cnt_hold <- backlog_hold %>% 
   group_by(Buyer) %>% 
@@ -167,16 +174,6 @@ backlog_not_out_to_bid <- backlog_raw %>% filter(`Out-to-Bid` == "Not Requested"
 backlog_on_hold <- backlog_hold %>% group_by(Buyer) %>% summarise(OnHoldCnt = n())
 
 backlog_plot <- full_join(full_join(backlog_out_to_bid, backlog_not_out_to_bid, by = "Buyer"), 
-                          backlog_on_hold, by = "Buyer") %>% 
-  replace(is.na(.), 0) %>% 
-  full_join(.,buyers_cat, by = "Buyer") %>% 
-  mutate_at("Category", ~parse_factor(., levels = buyer_cat_fct)) %>% 
-  select(Buyer, Category, everything()) %>% 
-  rename(`Out-To-Bid` = `OtBCnt`, `Actionable` = `NOtBCnt`, `On Hold` = `OnHoldCnt`) %>% 
-  gather(Type, Count, -Buyer, -Category) %>%
-  arrange(Category, desc(Buyer))
-
-backlog_plot_90dayplus <- full_join(full_join(backlog_out_to_bid, backlog_not_out_to_bid, by = "Buyer"), 
                           backlog_on_hold, by = "Buyer") %>% 
   replace(is.na(.), 0) %>% 
   full_join(.,buyers_cat, by = "Buyer") %>% 
