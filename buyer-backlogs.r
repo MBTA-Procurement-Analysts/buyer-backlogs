@@ -9,7 +9,7 @@
 
 # Init, Library, and File Imports -----------------------------------------
 
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+setwd("C:/Users/nguo/Documents/github/buyer-backlogs/")
 
 library(tidyverse)
 library(kableExtra)
