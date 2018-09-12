@@ -9,7 +9,7 @@
 
 # Init, Library, and File Imports -----------------------------------------
 
-setwd("C:/Users/nguo/Documents/github/buyer-backlogs/")
+setwd("/home/ubuntu/Projects/buyer-backlogs/")
 
 library(tidyverse)
 library(kableExtra)
@@ -20,11 +20,10 @@ library(plotly)
 library(scales)
 library(RColorBrewer)
 
-# backlog_raw <- readxl::read_excel("data/MB_REQ_HOLD_REQS_NOT_SOURCED_1401443629_08302018.xlsx", skip = 1)
-backlog_raw <- readxl::read_excel("data/collections/MB_REQ_HOLD_REQS_NOT_SOURCED_1145184834_09112018_1429.xlsx", skip = 1)
+backlog_raw <- readxl::read_excel("data/MB_REQ_HOLD_REQS_NOT_SOURCED_1449667231_09122018_1648.xlsx", skip = 1)
 
 # date of data download from fmis
-data_date <- ymd("2018-09-11")
+data_date <- ymd("2018-09-12")
 
 # Constant Definitions ----------------------------------------------------
 
