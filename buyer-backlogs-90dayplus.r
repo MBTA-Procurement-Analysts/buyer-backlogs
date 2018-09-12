@@ -51,4 +51,6 @@ backlog_all_table_90days <- full_join(backlog_cnt_nohold_90dayplus, backlog_cnt_
 backlog_plot_90dayplus <- backlog_all_table_90days %>% 
   rename(`Out-to-Bid` = `90+ Out-to-Bid Count`, `On Hold` = `90+ On Hold Count`, `Actionable` = `90+ Actionable Count`) %>% 
   gather(Type, Count, -Buyer, -Category) %>%
-  arrange(Category, desc(Buyer))
+  arrange(Category, desc(Buyer)) %>% 
+  mutate_at("Buyer", substr, start = 0, stop = 2)
+

@@ -21,21 +21,15 @@ library(scales)
 library(RColorBrewer)
 
 # backlog_raw <- readxl::read_excel("data/MB_REQ_HOLD_REQS_NOT_SOURCED_1401443629_08302018.xlsx", skip = 1)
-backlog_raw <- readxl::read_excel("data/collections/MB_REQ_HOLD_REQS_NOT_SOURCED_738843288_091082018_1413-noname.xlsx", skip = 1)
+backlog_raw <- readxl::read_excel("data/collections/MB_REQ_HOLD_REQS_NOT_SOURCED_1145184834_09112018_1429.xlsx", skip = 1)
 
 # date of data download from fmis
-data_date <- ymd("2018-09-10")
+data_date <- ymd("2018-09-11")
 
 # Constant Definitions ----------------------------------------------------
 
-sourcing_execs <- tibble(Category = "SE", 
-                         Buyer = c("AF", "TD", "MB", "EC", "EW", "RW"))
-
-inventory_buyers <- tibble(Category = "INV", 
-                           Buyer = c("AK", "DM", "KL", "PH", "TS", "NS"))
-
-non_inventory_buyers <- tibble(Category = "NINV", 
-                               Buyer = c("CF", "JK", "JL", "KH", "WR", "TT"))
+# Buyer Category Definition, now residing in a different file
+source("buyer-group-definition.r")
 
 # Buyer Category Factors, for ordering
 buyer_cat_fct <- c("NINV", "SE", "INV")
@@ -142,9 +136,12 @@ backlog_all_table <- full_join(backlog_bins_nohold, backlog_cnt_hold, by = "Buye
   select(Category, everything()) %>% 
   arrange(Category, Buyer)
 
+backlog_kable_source <- backlog_all_table %>% 
+  ungroup(Buyer) %>% 
+  mutate_at("Buyer", substr, start = 0, stop = 2)
 
 # Used to render kable, removed Category Column for manual grouping
-backlog_subtotal_kable <- backlog_all_table %>% 
+backlog_subtotal_kable <- backlog_kable_source %>% 
   group_by(Category) %>% 
   summarise_at(vars(everything(), -Category, -Buyer), sum) %>% 
   mutate(Buyer = "Subtotal") %>% 
@@ -156,24 +153,31 @@ backlog_total_kable <- backlog_subtotal_kable %>%
   select(Category, Buyer, everything())
 
 backlog_kable <- bind_rows(
-  filter(backlog_all_table, Category == "NINV"),
+  filter(backlog_kable_source, Category == "NINV"),
   filter(backlog_subtotal_kable, Category == "NINV"),
-  filter(backlog_all_table, Category == "SE"),
+  filter(backlog_kable_source, Category == "SE"),
   filter(backlog_subtotal_kable, Category == "SE"),
-  filter(backlog_all_table, Category == "INV"),
+  filter(backlog_kable_source, Category == "INV"),
   filter(backlog_subtotal_kable, Category == "INV"), backlog_total_kable) %>% 
   select(-Category)
 
 
+# Number of Rows per category, for auto-adjusting groups and styles for the kable
+backlog_age_kable_col_count <- backlog_kable_source %>% 
+  group_by(Category) %>% 
+  summarise(n()) %>% 
+  mutate_at("Category", ~parse_factor(., levels = buyer_cat_fct)) %>% 
+  arrange(Category)
+
 # Buyer Stacked Bar Graph -------------------------------------------------
 
-backlog_out_to_bid <- backlog_raw %>% filter(`Out-to-Bid` == "Requested") %>% group_by(Buyer) %>% summarize(OtBCnt = n ())
+backlog_out_to_bid_plot <- backlog_raw %>% filter(`Out-to-Bid` == "Requested") %>% group_by(Buyer) %>% summarize(OtBCnt = n ())
 
 backlog_not_out_to_bid <- backlog_raw %>% filter(`Out-to-Bid` == "Not Requested") %>% filter(`Hold From Further Processing` == "N") %>% group_by(Buyer) %>% summarise(NOtBCnt = n())
 
 backlog_on_hold <- backlog_hold %>% group_by(Buyer) %>% summarise(OnHoldCnt = n())
 
-backlog_plot <- full_join(full_join(backlog_out_to_bid, backlog_not_out_to_bid, by = "Buyer"), 
+backlog_plot <- full_join(full_join(backlog_out_to_bid_plot, backlog_not_out_to_bid, by = "Buyer"), 
                           backlog_on_hold, by = "Buyer") %>% 
   replace(is.na(.), 0) %>% 
   full_join(.,buyers_cat, by = "Buyer") %>% 
@@ -181,4 +185,5 @@ backlog_plot <- full_join(full_join(backlog_out_to_bid, backlog_not_out_to_bid, 
   select(Buyer, Category, everything()) %>% 
   rename(`Out-To-Bid` = `OtBCnt`, `Actionable` = `NOtBCnt`, `On Hold` = `OnHoldCnt`) %>% 
   gather(Type, Count, -Buyer, -Category) %>%
-  arrange(Category, desc(Buyer))
+  arrange(Category, desc(Buyer)) %>% 
+  mutate_at("Buyer", substr, start = 0, stop = 2)

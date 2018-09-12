@@ -6,6 +6,7 @@ output: html_document
 source("./buyer-backlogs.r")
 source("./buyer-backlogs-90dayplus.r")
 source("./buyer-backlogs-amounts.r")
+source("./approver-backlogs.r")
 ```
 # Buyer Backlog Report of `r data_date`
 
@@ -46,25 +47,44 @@ backlog_plot_90dayplus %>% split(backlog_plot_90dayplus$Category) %>%
 
 ## All Backlog, By Req Age
 ```{r echo=FALSE}
+# This vector holds the buyer counts for this kable, in "NI, SE, INV" order, then add 1 for subtotal line.
+# group_rows uses the vector as is for each group.
+# row_spec uses cumsum of this value to get the index of last lines of each category
+# The index of final Sum row is the sum of the row #s + 1. 
+backlog_age_row_num_vec <- as_vector(backlog_age_kable_col_count[[2]]) + 1
 kable(backlog_kable) %>% 
   kable_styling() %>% 
   add_header_above(c(" " = 1, "Actionable" = 4, "On Hold" = 1, "Out-to-Bid" = 1, " " = 1)) %>% 
-  group_rows(index = c("Non-Inventory" = 7, "Sourcing Exec." = 7, "Inventory" = 7, "Total" = 1)) %>% 
-  row_spec(c(7,14,21), italic = TRUE, background = "#EEEEEE") %>% 
-  row_spec(22, bold = TRUE)
+  group_rows(index = c("Non-Inventory" = backlog_age_row_num_vec[1], 
+                       "Sourcing Exec." = backlog_age_row_num_vec[2], 
+                       "Inventory" = backlog_age_row_num_vec[3],
+                       "Total" = 1)) %>% 
+  row_spec(cumsum(backlog_age_row_num_vec), italic = TRUE, background = "#EEEEEE") %>% 
+  row_spec(sum(backlog_age_row_num_vec) + 1, bold = TRUE)
 ```
 <P style="page-break-before: always">
 
 ## Backlog older than 90 days, By Req Amount
 
 ```{r echo=FALSE}
+backlog_amt_row_num_vec <- as_vector(backlog_amt_kable_col_count[[2]]) + 1
 kable(backlog_amount_kable) %>% 
   kable_styling() %>% 
   add_header_above(c(" " = 1, "Actionable" = 3, "On Hold" = 1, "Out-to-Bid" = 1, " " = 1)) %>% 
-  group_rows(index = c("Non-Inventory" = 6, "Sourcing Exec." = 4, "Inventory" = 5, "Total" = 1)) %>% 
-  row_spec(c(6,10,15), italic = TRUE, background = "#EEEEEE") %>% 
-  row_spec(16, bold = TRUE)
+  group_rows(index = c("Non-Inventory" = backlog_amt_row_num_vec[1], 
+                       "Sourcing Exec." = backlog_amt_row_num_vec[2], 
+                       "Inventory" = backlog_amt_row_num_vec[3], 
+                       "Total" = 1)) %>% 
+  row_spec(cumsum(backlog_amt_row_num_vec), italic = TRUE, background = "#EEEEEE") %>% 
+  row_spec(sum(backlog_amt_row_num_vec) + 1, bold = TRUE)
 ```
 
+## Peter's Worklist
 
+```{r echo=FALSE}
+kable(approval_kable) %>% 
+  kable_styling() %>% 
+  add_header_above(c("Grouping By Age" = 3, "Grouping By Dollar Amount" = 3, " " = 1)) %>% 
+  column_spec(7, bold = TRUE)
+```
 Using data obtained on `r data_date`.

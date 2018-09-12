@@ -28,8 +28,18 @@ backlog_amt_all_table <- full_join(backlog_amt_bins_nohold, backlog_cnt_hold_90d
   select(Category, everything()) %>% 
   arrange(Category, Buyer)
 
+backlog_amt_kable_source <- backlog_amt_all_table %>% 
+  ungroup(Buyer) %>% 
+  mutate_at("Buyer", substr, start = 0, stop = 2)
+
+backlog_amt_kable_col_count <- backlog_amt_kable_source %>% 
+  group_by(Category) %>% 
+  summarise(n()) %>% 
+  mutate_at("Category", ~parse_factor(., levels = buyer_cat_fct)) %>% 
+  arrange(Category)
+
 # Used to render kable, removed Category Column for manual grouping
-backlog_amount_subtotal_kable <- backlog_amt_all_table %>% 
+backlog_amount_subtotal_kable <- backlog_amt_kable_source %>% 
   group_by(Category) %>% 
   summarise_at(vars(everything(), -Category, -Buyer), sum) %>% 
   mutate(Buyer = "Subtotal") %>% 
@@ -41,11 +51,11 @@ backlog_amount_total_kable <- backlog_amount_subtotal_kable %>%
   select(Category, Buyer, everything())
 
 backlog_amount_kable <- bind_rows(
-  filter(backlog_amt_all_table, Category == "NINV"),
+  filter(backlog_amt_kable_source, Category == "NINV"),
   filter(backlog_amount_subtotal_kable, Category == "NINV"),
-  filter(backlog_amt_all_table, Category == "SE"),
+  filter(backlog_amt_kable_source, Category == "SE"),
   filter(backlog_amount_subtotal_kable, Category == "SE"),
-  filter(backlog_amt_all_table, Category == "INV"),
+  filter(backlog_amt_kable_source, Category == "INV"),
   filter(backlog_amount_subtotal_kable, Category == "INV"), backlog_amount_total_kable) %>% 
   select(-Category)
 
