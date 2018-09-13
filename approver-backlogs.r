@@ -18,8 +18,9 @@ approval_raw <- approval_raw %>%
 
 # DF/Tibble -> Tibble; Bins the Age for the incoming dataframe, designed for approver use
 approver.age.binning.hard <- function(data) {
-  data %>% mutate(Bins = if_else((Age >= 0 & Age < 14), 0,
-                                 if_else((Age >= 14 & Age < 30), 14, 30)))
+  data %>% mutate(Bins = if_else((Age >= 0 & Age < 7), 0,
+                                 if_else((Age >=7 & Age < 14), 7, 
+                                         if_else((Age >= 14 & Age < 30), 14, 30))))
 }
 
 approver.amount.binning.hard <- function(data) {
@@ -40,7 +41,7 @@ approver.bin.counts.hard <- function(data) {
 approver_cnt_bins <- approval_raw %>% 
   approver.age.binning.hard() %>% 
   approver.bin.counts.hard() %>% 
-  rename(`0 to 14` = `0`, `14 to 30` = `14`, `30+` = `30`)
+  rename(`0 to 7` = `0`, `7 to 14` = `7`, `14 to 30` = `14`, `30+` = `30`)
   
 
 approver_amt_bins <- approval_raw %>% 
@@ -49,4 +50,4 @@ approver_amt_bins <- approval_raw %>%
   rename(`< $250k` = `0`, `$250k to $500k` = `250000`, `$500k+` = `5e+05`)
 
 approval_kable <- bind_cols(approver_cnt_bins, approver_amt_bins) %>% 
-  mutate(Total = `0 to 14` + `14 to 30` + `30+`)
+  mutate(Total = `0 to 7` + `7 to 14` + `14 to 30` + `30+`)

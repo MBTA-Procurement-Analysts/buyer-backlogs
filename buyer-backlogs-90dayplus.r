@@ -45,6 +45,7 @@ backlog_all_table_90days <- full_join(backlog_cnt_nohold_90dayplus, backlog_cnt_
   full_join(., backlog_cnt_out_to_bid_90dayplus, by = "Buyer") %>% 
   replace(is.na(.), 0) %>% 
   left_join(., buyers_cat, by = "Buyer") %>% 
+  mutate_at("Category", ~parse_factor(., levels = buyer_cat_fct)) %>% 
   select(Category, everything()) %>% 
   arrange(Category, Buyer)
 
