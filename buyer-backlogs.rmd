@@ -3,6 +3,8 @@ output: html_document
 ---
 
 ```{r include=FALSE}
+library(lubridate)
+source("./data_import.r")
 source("./buyer-backlogs.r")
 source("./buyer-backlogs-90dayplus.r")
 source("./buyer-backlogs-amounts.r")
@@ -85,7 +87,7 @@ kable(backlog_amount_kable) %>%
 kable(approval_kable) %>% 
   kable_styling() %>% 
   add_header_above(c("Grouping By Age (Days)" = 3, "Grouping By Dollar Amount" = 3, " " = 1)) %>% 
-  column_spec(8, bold = TRUE) %>% 
+  column_spec(7, bold = TRUE) %>% 
   column_spec(c(3), border_right = TRUE, include_thead = TRUE)
 
 ```

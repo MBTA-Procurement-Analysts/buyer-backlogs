@@ -8,7 +8,7 @@
 
 # Init, File Imports ------------------------------------------------------
 
-approval_raw <- readxl::read_excel("data/SLT_WORKLIST_1558214757_09122018_1648.xlsx", skip = 1)
+approval_raw <- readxl::read_excel(approver_data_path, skip = 1)
 
 
 # Data Wrangling ----------------------------------------------------------
