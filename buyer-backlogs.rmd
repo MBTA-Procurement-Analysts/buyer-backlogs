@@ -79,12 +79,14 @@ kable(backlog_amount_kable) %>%
   row_spec(sum(backlog_amt_row_num_vec) + 1, bold = TRUE)
 ```
 
-## Peter's Worklist
+## PP's Worklist
 
 ```{r echo=FALSE}
 kable(approval_kable) %>% 
   kable_styling() %>% 
-  add_header_above(c("Grouping By Age" = 3, "Grouping By Dollar Amount" = 3, " " = 1)) %>% 
-  column_spec(7, bold = TRUE)
+  add_header_above(c("Grouping By Age (Days)" = 3, "Grouping By Dollar Amount" = 3, " " = 1)) %>% 
+  column_spec(8, bold = TRUE) %>% 
+  column_spec(c(3), border_right = TRUE, include_thead = TRUE)
+
 ```
 Using data obtained on `r data_date`.
