@@ -12,38 +12,106 @@ source("./approver-backlogs.r")
 ```
 # Buyer Backlog Report of `r data_date`
 
-## Backlog Count by Categories
-
 ### All Reqs
 
-```{r echo=FALSE, fig.width=10}
+```{r echo=FALSE, fig.width=10, fig.height = 4}
+backlog_plot_ninv <- backlog_plot %>% 
+  filter(Category == "NINV") %>% 
+  plot_ly() %>% 
+  add_bars(y = ~Buyer,
+          x = ~Count,
+          color = ~Type,
+          type = "bar", 
+          colors = c("#99D594","#FFFFBF","#FC8D59"),
+          width = "20px",
+          legendgroup = ~Type) %>% 
+  layout(yaxis = list(autorange = "reversed"), barmode = 'stack')
 
-backlog_plot %>% split(backlog_plot$Category) %>%
-  map(plot_ly, 
-      y = ~Buyer, 
-      x = ~Count, 
-      color = ~Type, 
-      type = "bar", 
-      colors = c("#99D594","#FFFFBF","#FC8D59"),
-      legendgroup = ~Type) %>% 
-  map(layout, yaxis = list(autorange = "reversed"), barmode = 'stack') %>% 
-  subplot(nrows = 3, margin = .05, shareX = TRUE)
+backlog_plot_se <- backlog_plot %>% 
+  filter(Category == "SE") %>% 
+  plot_ly() %>% 
+  add_bars(y = ~Buyer,
+          x = ~Count,
+          color = ~Type,
+          type = "bar", 
+          colors = c("#99D594","#FFFFBF","#FC8D59"),
+          legendgroup = ~Type, 
+          width = "20px",
+          showlegend = F) %>% 
+  layout(yaxis = list(autorange = "reversed"), barmode = 'stack')
+
+backlog_plot_inv <- backlog_plot %>% 
+  filter(Category == "INV") %>% 
+  plot_ly() %>% 
+  add_bars(y = ~Buyer,
+          x = ~Count,
+          color = ~Type,
+          type = "bar", 
+          colors = c("#99D594","#FFFFBF","#FC8D59"),
+          legendgroup = ~Type, 
+          width = "20px",
+          showlegend = F) %>% 
+  layout(yaxis = list(autorange = "reversed"), barmode = 'stack')
+
+subplot(backlog_plot_ninv, backlog_plot_se, backlog_plot_inv, nrows = 3, margin = .03, shareX = TRUE)
 ```
 
 ### Reqs Over 90 Days 
 
-```{r echo=FALSE, fig.width=10}
+```{r echo=FALSE, fig.width=10, fig.height = 4}
 
-backlog_plot_90dayplus %>% split(backlog_plot_90dayplus$Category) %>%
-  map(plot_ly, 
-      y = ~Buyer, 
-      x = ~Count, 
-      color = ~Type, 
-      type = "bar", 
-      colors = c("#99D594","#FFFFBF","#FC8D59"),
-      legendgroup = ~Type) %>% 
-  map(layout, yaxis = list(autorange = "reversed"), barmode = 'stack') %>% 
-  subplot(nrows = 3, margin = .05, shareX = TRUE)
+backlog_plot_90dayplus_ninv <- backlog_plot_90dayplus %>% 
+  filter(Category == "NINV") %>% 
+  plot_ly() %>% 
+  add_bars(y = ~Buyer,
+          x = ~Count,
+          color = ~Type,
+          type = "bar", 
+          colors = c("#99D594","#FFFFBF","#FC8D59"),
+          width = "20px",
+          legendgroup = ~Type) %>% 
+  layout(yaxis = list(autorange = "reversed"), barmode = 'stack')
+
+backlog_plot_90dayplus_se <- backlog_plot_90dayplus %>% 
+  filter(Category == "SE") %>% 
+  plot_ly() %>% 
+  add_bars(y = ~Buyer,
+          x = ~Count,
+          color = ~Type,
+          type = "bar", 
+          colors = c("#99D594","#FFFFBF","#FC8D59"),
+          width = "20px",
+          legendgroup = ~Type,
+          showlegend = F) %>% 
+  layout(yaxis = list(autorange = "reversed"), barmode = 'stack')
+
+backlog_plot_90dayplus_inv <- backlog_plot_90dayplus %>% 
+  filter(Category == "INV") %>% 
+  plot_ly() %>% 
+  add_bars(y = ~Buyer,
+          x = ~Count,
+          color = ~Type,
+          type = "bar", 
+          colors = c("#99D594","#FFFFBF","#FC8D59"),
+          width = "20px",
+          legendgroup = ~Type,
+          showlegend = F) %>% 
+  layout(yaxis = list(autorange = "reversed"), barmode = 'stack')
+
+
+subplot(backlog_plot_90dayplus_ninv, backlog_plot_90dayplus_se, backlog_plot_90dayplus_inv, nrows = 3, margin = .03, shareX = TRUE)
+
+```
+
+## PP's Worklist
+
+```{r echo=FALSE}
+kable(approval_kable) %>% 
+  kable_styling() %>% 
+  add_header_above(c("Grouping By Age (Days)" = 4, "Grouping By Dollar Amount" = 3, " " = 1)) %>% 
+  column_spec(8, bold = TRUE) %>% 
+  column_spec(c(4), border_right = TRUE, include_thead = TRUE)
+
 ```
 <P style="page-break-before: always">
 
@@ -81,14 +149,4 @@ kable(backlog_amount_kable) %>%
   row_spec(sum(backlog_amt_row_num_vec) + 1, bold = TRUE)
 ```
 
-## PP's Worklist
-
-```{r echo=FALSE}
-kable(approval_kable) %>% 
-  kable_styling() %>% 
-  add_header_above(c("Grouping By Age (Days)" = 3, "Grouping By Dollar Amount" = 3, " " = 1)) %>% 
-  column_spec(7, bold = TRUE) %>% 
-  column_spec(c(3), border_right = TRUE, include_thead = TRUE)
-
-```
 Using data obtained on `r data_date`.
