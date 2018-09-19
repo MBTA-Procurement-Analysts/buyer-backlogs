@@ -14,6 +14,7 @@ echo "backlog_data_path <- '/home/ubuntu/Projects/buyer-backlogs/data/ductpipe/$
 echo "approver_data_path <- '/home/ubuntu/Projects/buyer-backlogs/data/ductpipe/$1/APPROVER-BACKLOG-$1.xlsx'" >> ./data_import.r
 
 echo "data_date <- now('America/New_York')" >> ./data_import.r
+echo "print('Data Import Completed.')" >> ./data_import.r
 
 R -f ./main.r
 
