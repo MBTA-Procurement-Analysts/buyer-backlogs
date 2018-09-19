@@ -1,3 +1,4 @@
+
 # buyer-backlogs-amounts.r
 # Created by: Mickey Guo
 # To display backlog req data that is binned by amount, instead of days.
@@ -8,10 +9,12 @@
 
 
 # Load Dependencies -------------------------------------------------------
-
+library(dplyr)
+library(tidyverse)
 # setwd("C:/Users/nguo/Documents/github/buyer-backlogs/")
-# source("./buyer-backlogs.r")
-# source("./buyer-backlogs-90dayplus.r")
+source("./buyer-backlogs.r")
+source("./buyer-backlogs-90dayplus.r")
+
 
 # Data Wrangling ----------------------------------------------------------
 

@@ -18,7 +18,7 @@ library(knitr)
 library(plotly)
 library(scales)
 library(RColorBrewer)
-
+source("data_import.r")
 backlog_raw <- readxl::read_excel(backlog_data_path, skip = 1)
 
 
