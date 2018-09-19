@@ -4,16 +4,10 @@ output: html_document
 
 ```{r include=FALSE, warning=FALSE}
 library(lubridate)
-fileConn <- file("output.txt")
-writeLines("0",fileConn)
 source("./data_import.r")
-writeLines("1", fileConn)
 source("./buyer-backlogs.r")
-writeLines("2", fileConn)
 source("./buyer-backlogs-90dayplus.r")
-writeLines("3",fileConn)
 source("./buyer-backlogs-amounts.r")
-writeLines("4",fileConn)
 source("./approver-backlogs.r")
 ```
 # Buyer Backlog Report of `r data_date`

@@ -110,6 +110,14 @@ bin.counts.hard <- function(data) {
     #replace(is.na(.), 0)
 }
 
+validate.amount.bins.hard <- function(data) {
+    data <- if (!has_name(data, "0")) {mutate(data, `0` = c(0))} else {data}
+  data <- if (!has_name(data, "250000")) {mutate(data, `250000` = c(0))} else {data}
+    data <- if (!has_name(data, "5e+05")) {mutate(data, `5e+05` = c(0))} else {data}
+    data
+}
+
+
 backlog_bins_nohold <- backlog_nohold %>% 
   age.binning.hard() %>% 
   bin.counts.hard() %>% 

@@ -21,6 +21,8 @@ source("./buyer-backlogs-90dayplus.r")
 backlog_amt_bins_nohold <- backlog_nohold_90dayplus %>% 
   amount.binning.hard() %>% 
   bin.counts.hard() %>% 
+  validate.amount.bins.hard() %>%
+  select(Buyer, `0`, `250000`, `5e+05`) %>%
   rename(`< $250k` = `0`, `$250k to $500k` = `250000`, `$500k+` = `5e+05`)
 
 backlog_amt_all_table <- full_join(backlog_amt_bins_nohold, backlog_cnt_hold_90dayplus, by = "Buyer") %>% 
