@@ -116,9 +116,11 @@ kable(approval_kable) %>%
 
 ### Upper Extreme Details (`r approval_30days_count`)
 
+#### PP's Greater 30 Days
+
 ```{r echo=FALSE}
 kable(approval_30days_detail_table) %>% 
-  kable_styling()
+  kable_styling() %>% add_header_above(c("Worklist Data" = 4,"Req Details" = 2))
 ```
 <P style="page-break-before: always">
 
