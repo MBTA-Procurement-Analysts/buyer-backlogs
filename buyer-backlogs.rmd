@@ -15,7 +15,7 @@ source("./approver-backlogs.r")
 
 ### All Reqs
 
-```{r echo=FALSE, fig.width=10, fig.height = 4, warning=FALSE}
+```{r echo=FALSE, fig.width=10, fig.height = 3, warning=FALSE}
 backlog_plot_ninv <- backlog_plot %>% 
   filter(Category == "NINV") %>% 
   plot_ly() %>% 
@@ -59,7 +59,7 @@ subplot(backlog_plot_ninv, backlog_plot_se, backlog_plot_inv, nrows = 3, margin 
 
 ### Reqs Over 90 Days 
 
-```{r echo=FALSE, fig.width=10, fig.height = 4}
+```{r echo=FALSE, fig.width=10, fig.height = 3}
 
 backlog_plot_90dayplus_ninv <- backlog_plot_90dayplus %>% 
   filter(Category == "NINV") %>% 
