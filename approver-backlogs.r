@@ -8,8 +8,14 @@
 
 # Init, File Imports ------------------------------------------------------
 
+library(scales)
+
 approval_raw <- readxl::read_excel(approver_data_path, skip = 1)
 
+# Function Definition -----------------------------------------------------
+
+# Dollar Formatting for Tables
+usd <- dollar_format(largest_with_cents = 1e+15, prefix = "$")
 
 # Data Wrangling ----------------------------------------------------------
 
@@ -40,7 +46,7 @@ approver.bin.counts.hard <- function(data) {
 
 approver_cnt_bins <- approval_raw %>% 
   approver.age.binning.hard() %>% 
-  approver.bin.counts.hard() %>% 
+  approver.bin.counts.hard() %>%
   rename(`0 to 7` = `0`, `7 to 14` = `7`, `14 to 30` = `14`, `30+` = `30`)
   
 
@@ -51,3 +57,13 @@ approver_amt_bins <- approval_raw %>%
 
 approval_kable <- bind_cols(approver_cnt_bins, approver_amt_bins) %>% 
   mutate(Total = `0 to 7` + `7 to 14` + `14 to 30` + `30+`)
+
+approval_30days_detail_table <- approval_raw %>% 
+  filter(Age >= 30) %>% 
+  mutate(`Line Description` = c(""), `PO Date` = c("")) %>% 
+  rename(`Worklist Time` = `Date/Time`, `Amount` = `Sum_of_PO_Amt`) %>% 
+  mutate_at("Amount", usd) %>% 
+  arrange(desc(Age)) %>% 
+  select(`Age`, `PO No.`, `Worklist Time`, `Line Description`, `PO Date`, `Amount`)
+
+approval_30days_count <- count(approval_30days_detail_table)

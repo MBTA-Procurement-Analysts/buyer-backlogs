@@ -112,7 +112,13 @@ kable(approval_kable) %>%
   add_header_above(c("Grouping By Age (Days)" = 4, "Grouping By Dollar Amount" = 3, " " = 1)) %>% 
   column_spec(8, bold = TRUE) %>% 
   column_spec(c(4), border_right = TRUE, include_thead = TRUE)
+```
 
+### Upper Extreme Details (`r approval_30days_count`)
+
+```{r echo=FALSE}
+kable(approval_30days_detail_table) %>% 
+  kable_styling()
 ```
 <P style="page-break-before: always">
 

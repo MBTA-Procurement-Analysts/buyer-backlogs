@@ -9,7 +9,7 @@
 
 # Init, Library, and File Imports -----------------------------------------
 
-setwd("/home/ubuntu/Projects/buyer-backlogs/")
+#setwd("/home/ubuntu/Projects/buyer-backlogs/")
 
 library(tidyverse)
 library(kableExtra)
@@ -18,7 +18,6 @@ library(knitr)
 library(plotly)
 library(scales)
 library(RColorBrewer)
-source("data_import.r")
 backlog_raw <- readxl::read_excel(backlog_data_path, skip = 1)
 
 # Constant Definitions ----------------------------------------------------
