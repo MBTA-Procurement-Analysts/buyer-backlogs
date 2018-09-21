@@ -60,10 +60,10 @@ approval_kable <- bind_cols(approver_cnt_bins, approver_amt_bins) %>%
 
 approval_30days_detail_table <- approval_raw %>% 
   filter(Age >= 30) %>% 
-  mutate(`Line Description` = c(""), `Req Approval Date` = c("")) %>% 
+  mutate(`Line 1 Description` = c(""), `Req Approval Date` = c(""), `Requisitioner` = c(" ")) %>% 
   rename(`Worklist Time` = `Date/Time`, `Amount` = `Sum_of_PO_Amt`) %>% 
   mutate_at("Amount", usd) %>% 
   arrange(desc(Age)) %>% 
-  select(`Age`, `PO No.`, `Worklist Time`, `Amount`, `Line Description`, `Req Approval Date`)
+  select(`Age`, `PO No.`, `Worklist Time`, `Amount`, `Line 1 Description`, `Req Approval Date`, `Requisitioner`)
 
 approval_30days_count <- count(approval_30days_detail_table)
