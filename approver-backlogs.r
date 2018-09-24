@@ -59,7 +59,7 @@ approval_kable <- bind_cols(approver_cnt_bins, approver_amt_bins) %>%
   mutate(Total = `0 to 7` + `7 to 14` + `14 to 30` + `30+`)
 
 approval_30days_detail_table <- approval_raw %>% 
-  filter(Age >= 30) %>% 
+  #filter(Age >= 30) %>% 
   mutate(`Line 1 Description` = c(""), `Req Approval Date` = c(""), `Requisitioner` = c(" ")) %>% 
   rename(`Worklist Time` = `Date/Time`, `Amount` = `Sum_of_PO_Amt`) %>% 
   mutate_at("Amount", usd) %>% 
