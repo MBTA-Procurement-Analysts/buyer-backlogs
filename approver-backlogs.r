@@ -30,8 +30,9 @@ approver.age.binning.hard <- function(data) {
 }
 
 approver.amount.binning.hard <- function(data) {
-  data %>% mutate(Bins = if_else((`Sum_of_PO_Amt` >= 0 & `Sum_of_PO_Amt` < 250000), 0,
-                                 if_else((`Sum_of_PO_Amt` >= 250000 & `Sum_of_PO_Amt` < 500000), 250000, 500000)))
+  data %>% mutate(Bins = if_else((`Sum_of_PO_Amt` >= 0 & `Sum_of_PO_Amt` < 50000), 0,
+                                 if_else((`Sum_of_PO_Amt` >= 50000 & `Sum_of_PO_Amt` < 250000), 50000, 
+                                         if_else((`Sum_of_PO_Amt` >= 250000 & `Sum_of_PO_Amt` < 500000), 250000, 500000))))
 }
 
 # DF/Tibble -> Tibble; Sums bins and spread them into columns. Does not
@@ -48,17 +49,18 @@ approver_cnt_bins <- approval_raw %>%
   approver.age.binning.hard() %>% 
   approver.bin.counts.hard() %>%
   rename(`0 to 7` = `0`, `7 to 14` = `7`, `14 to 30` = `14`, `30+` = `30`)
-  
+
 
 approver_amt_bins <- approval_raw %>% 
   approver.amount.binning.hard() %>% 
   approver.bin.counts.hard() %>% 
-  rename(`< $250k` = `0`, `$250k to $500k` = `250000`, `$500k+` = `5e+05`)
+  rename(`< $50k` = `0`, `$50k to $250k` = `50000`, `$250k to $500k` = `250000`, `$500k+` = `5e+05`)
 
 approval_kable <- bind_cols(approver_cnt_bins, approver_amt_bins) %>% 
   mutate(Total = `0 to 7` + `7 to 14` + `14 to 30` + `30+`)
 
 approval_30days_detail_table <- approval_raw %>% 
+  filter(`Sum_of_PO_Amt` >= 50000) %>% 
   #filter(Age >= 30) %>% 
   mutate(`Line 1 Description` = c(""), `Req Approval Date` = c(""), `Requisitioner` = c(" ")) %>% 
   rename(`Worklist Time` = `Date/Time`, `Amount` = `Sum_of_PO_Amt`) %>% 
@@ -67,3 +69,5 @@ approval_30days_detail_table <- approval_raw %>%
   select(`Age`, `PO No.`, `Worklist Time`, `Amount`, `Line 1 Description`, `Req Approval Date`, `Requisitioner`)
 
 approval_30days_count <- count(approval_30days_detail_table)
+
+approval_total_count <-count(approval_raw)

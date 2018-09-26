@@ -33,7 +33,7 @@ buyers_cat<- bind_rows(sourcing_execs, inventory_buyers, non_inventory_buyers)
 
 # Date to be used as Today. Use the dynamic definition unless otherwise needed.
 date_now <- today()
-# date_now <- ymd("2018-08-24")
+date_now <- ymd("2018-09-24")
 
 # FROM date of the filtering
 date_from <- ymd("2000-01-01")
