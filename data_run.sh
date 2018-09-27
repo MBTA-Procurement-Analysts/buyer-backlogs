@@ -16,6 +16,9 @@ echo "approver_data_path <- '/home/ubuntu/Projects/buyer-backlogs/data/ductpipe/
 echo "data_date <- now('America/New_York')" >> ./data_import.r
 echo "print('Data Import Completed.')" >> ./data_import.r
 
+version=$(git rev-list --count ohio)
+echo "code_version <- $version" >> ./data_import.r
+
 R -f ./main.r
 
 exit 0

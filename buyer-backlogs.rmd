@@ -5,7 +5,7 @@ output: html_document
 ```{r include=FALSE, warning=FALSE}
 print("Buyer Backlog R Scipt")
 library(lubridate)
-source("./data_import.r")
+source("./data_import_manual.r")
 source("./buyer-backlogs.r")
 source("./buyer-backlogs-90dayplus.r")
 source("./buyer-backlogs-amounts.r")
@@ -116,15 +116,15 @@ kable(approval_kable) %>%
 
 <P style="page-break-before: always">
 
-### PP's Worklist Details (`r approval_30days_count`)
+### PP's Worklist Details (`r approval_detail_count`)
 
-*Omitted `r (approval_total_count - approval_30days_count)` entries less than $50,000.*
+*Omitted `r (approval_total_count - approval_detail_count)` entries less than $50,000.*
 
 
 ```{r echo=FALSE}
-kable(approval_30days_detail_table) %>% 
+kable(approval_detail_table)%>% 
   kable_styling() %>% 
-  add_header_above(c("Worklist Data" = 4,"Req Details" = 3))
+  add_header_above(c(" " = 1, "Worklist Data" = 4,"Req Details" = 3))
 ```
 <P style="page-break-before: always">
 
@@ -162,4 +162,4 @@ kable(backlog_amount_kable) %>%
   row_spec(sum(backlog_amt_row_num_vec) + 1, bold = TRUE)
 ```
 
-Using data obtained on `r data_date`.
+Using data obtained at `r data_date`. Code version `r code_version`.

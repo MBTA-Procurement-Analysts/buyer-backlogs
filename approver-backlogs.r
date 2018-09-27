@@ -10,6 +10,9 @@
 
 library(scales)
 
+# source functions that gets rubixs data
+source("./rubix_getter.r")
+
 approval_raw <- readxl::read_excel(approver_data_path, skip = 1)
 
 # Function Definition -----------------------------------------------------
@@ -59,15 +62,25 @@ approver_amt_bins <- approval_raw %>%
 approval_kable <- bind_cols(approver_cnt_bins, approver_amt_bins) %>% 
   mutate(Total = `0 to 7` + `7 to 14` + `14 to 30` + `30+`)
 
-approval_30days_detail_table <- approval_raw %>% 
+approval_detail_table_po <- approval_raw %>% 
   filter(`Sum_of_PO_Amt` >= 50000) %>% 
   #filter(Age >= 30) %>% 
-  mutate(`Line 1 Description` = c(""), `Req Approval Date` = c(""), `Requisitioner` = c(" ")) %>% 
-  rename(`Worklist Time` = `Date/Time`, `Amount` = `Sum_of_PO_Amt`) %>% 
+  rename(`Worklist Time` = `Date/Time`, `Amount` = `Sum_of_PO_Amt`, `Worklist Age` = `Age`) %>% 
   mutate_at("Amount", usd) %>% 
-  arrange(desc(Age)) %>% 
-  select(`Age`, `PO No.`, `Worklist Time`, `Amount`, `Line 1 Description`, `Req Approval Date`, `Requisitioner`)
+  arrange(desc(`Worklist Age`)) %>% 
+  select(`PO No.`, `Worklist Time`, `Amount`, `Worklist Age`)
 
-approval_30days_count <- count(approval_30days_detail_table)
+approval_detail_table_req <- approval_raw %>%
+  filter(`Sum_of_PO_Amt` >= 50000) %>% 
+  select(`PO No.`) %>%
+  as_vector() %>%
+  get.reqs.tibble() %>% 
+  rename(`Line 1 Description` = `req_description`, `Req Approval Date` = `req_approval_date`, `Requisitioner` = `req_buyer`)
+
+approval_detail_table <- bind_cols(approval_detail_table_po, approval_detail_table_req) %>% 
+  mutate(`Req Age` = date_now - `Req Approval Date` ) %>% 
+  select(`Req Age`, everything())
+
+approval_detail_count <- count(approval_detail_table)
 
 approval_total_count <-count(approval_raw)
