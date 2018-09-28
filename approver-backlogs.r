@@ -78,7 +78,6 @@ approval_detail_table_po <- approval_raw %>%
   #filter(Age >= 30) %>% 
   rename(`Worklist Time` = `Date/Time`, `Amount` = `Sum_of_PO_Amt`, `Worklist Age` = `Age`) %>% 
   mutate_at("Amount", usd) %>% 
-  arrange(desc(`Worklist Age`)) %>% 
   select(`PO No.`, `Worklist Time`, `Amount`, `Worklist Age`)
 
 approval_detail_table_req <- approval_raw %>%
@@ -90,7 +89,8 @@ approval_detail_table_req <- approval_raw %>%
 
 approval_detail_table <- bind_cols(approval_detail_table_po, approval_detail_table_req) %>% 
   mutate(`Req Age` = date_now - `Req Approval Date` ) %>% 
-  select(`Req Age`, everything())
+  select(`Req Age`, everything()) %>% 
+  arrange(desc(`Req Age`))
 
 approval_detail_count <- count(approval_detail_table)
 
