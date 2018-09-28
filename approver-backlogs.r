@@ -18,11 +18,13 @@ approval_raw <- readxl::read_excel(approver_data_path, skip = 1)
 # Function Definition -----------------------------------------------------
 
 # Dollar Formatting for Tables
-usd <- dollar_format(largest_with_cents = 1e+15, prefix = "$")
+usd <- dollar_format(largest_with_cents = 5000, prefix = "$")
 
 # Data Wrangling ----------------------------------------------------------
 
+# Deduped since upstream query returns duplicate data
 approval_raw <- approval_raw %>% 
+  distinct(`PO No.`, .keep_all = TRUE) %>% 
   mutate(Age = date_now - date(`Date/Time`))
 
 # DF/Tibble -> Tibble; Bins the Age for the incoming dataframe, designed for approver use
@@ -85,12 +87,12 @@ approval_detail_table_req <- approval_raw %>%
   select(`PO No.`) %>%
   as_vector() %>%
   get.reqs.tibble() %>% 
-  rename(`Line 1 Description` = `req_description`, `Req Approval Date` = `req_approval_date`, `Requisitioner` = `req_buyer`)
+  rename(`Line 1 Description` = `req_description`, `Req Approval Date` = `req_approval_date`, `Buyer` = `req_buyer`)
 
 approval_detail_table <- bind_cols(approval_detail_table_po, approval_detail_table_req) %>% 
-  mutate(`Req Age` = date_now - `Req Approval Date` ) %>% 
-  select(`Req Age`, everything()) %>% 
-  arrange(desc(`Req Age`))
+  mutate(`Overall Age` = date_now - `Req Approval Date` ) %>% 
+  select(`Overall Age`, everything(), -`Worklist Time`, -`Req Approval Date`) %>% 
+  arrange(desc(`Overall Age`))
 
 approval_detail_count <- count(approval_detail_table)
 
