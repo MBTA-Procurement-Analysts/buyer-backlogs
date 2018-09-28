@@ -48,6 +48,15 @@ approver.bin.counts.hard <- function(data) {
   #replace(is.na(.), 0)
 }
 
+# DF/Tibble -> Tibble; Creates Bin Columns of 0s in case column is not present, for approver amount bins
+validate.approver.age.bins.hard <- function(data) {
+  data <- if (!has_name(data, "0")) {mutate(data, `0` = c(0))} else {data}
+  data <- if (!has_name(data, "50000")) {mutate(data, `50000` = c(0))} else {data}
+  data <- if (!has_name(data, "250000")) {mutate(data, `250000` = c(0))} else {data}
+  data <- if (!has_name(data, "5e+05")) {mutate(data, `5e+05` = c(0))} else {data}
+  data
+}
+
 approver_cnt_bins <- approval_raw %>% 
   approver.age.binning.hard() %>% 
   approver.bin.counts.hard() %>%
@@ -57,6 +66,8 @@ approver_cnt_bins <- approval_raw %>%
 approver_amt_bins <- approval_raw %>% 
   approver.amount.binning.hard() %>% 
   approver.bin.counts.hard() %>% 
+  validate.approver.age.bins.hard() %>%
+  select(`0`, `50000`, `250000`, `5e+05`) %>%
   rename(`< $50k` = `0`, `$50k to $250k` = `50000`, `$250k to $500k` = `250000`, `$500k+` = `5e+05`)
 
 approval_kable <- bind_cols(approver_cnt_bins, approver_amt_bins) %>% 
