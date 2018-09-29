@@ -15,7 +15,7 @@ source("./approver-backlogs.r")
 
 ### All Reqs
 
-```{r echo=FALSE, fig.width=10, fig.height = 3, warning=FALSE}
+```{r echo=FALSE, warning=FALSE, fig.align='center', out.width="100%", out.height="400px"}
 backlog_plot_ninv <- backlog_plot %>% 
   filter(Category == "NINV") %>% 
   plot_ly() %>% 
@@ -59,7 +59,7 @@ subplot(backlog_plot_ninv, backlog_plot_se, backlog_plot_inv, nrows = 3, margin 
 
 ### Reqs Over 90 Days 
 
-```{r echo=FALSE, fig.width=10, fig.height = 3}
+```{r echo=FALSE, out.width="100%", out.height="400px"}
 
 backlog_plot_90dayplus_ninv <- backlog_plot_90dayplus %>% 
   filter(Category == "NINV") %>% 
@@ -109,18 +109,22 @@ subplot(backlog_plot_90dayplus_ninv, backlog_plot_90dayplus_se, backlog_plot_90d
 ```{r echo=FALSE}
 kable(approval_kable) %>% 
   kable_styling() %>% 
-  add_header_above(c("Grouping By Age (Days)" = 4, "Grouping By Dollar Amount" = 3, " " = 1)) %>% 
-  column_spec(8, bold = TRUE) %>% 
+  add_header_above(c("Grouping By Age (Days)" = 4, "Grouping By Dollar Amount" = 4, " " = 1)) %>% 
+  column_spec(9, bold = TRUE) %>% 
   column_spec(c(4), border_right = TRUE, include_thead = TRUE)
 ```
 
-### Outlier Details (`r approval_30days_count`)
+<P style="page-break-before: always">
 
-#### PP's Greater 30 Days
+### PP's Worklist Details (`r approval_detail_count`)
+
+*Omitted `r (approval_total_count - approval_detail_count)` entries less than $50,000.*
+
 
 ```{r echo=FALSE}
-kable(approval_30days_detail_table) %>% 
-  kable_styling() %>% add_header_above(c("Worklist Data" = 4,"Req Details" = 3))
+kable(approval_detail_table)%>% 
+  kable_styling() %>% 
+  add_header_above(c(" " = 1, "Worklist Data" = 3,"Req Details" = 2))
 ```
 <P style="page-break-before: always">
 
@@ -158,4 +162,4 @@ kable(backlog_amount_kable) %>%
   row_spec(sum(backlog_amt_row_num_vec) + 1, bold = TRUE)
 ```
 
-Using data obtained on `r data_date`.
+Using data obtained at `r data_date`. Code version `r code_version`.
