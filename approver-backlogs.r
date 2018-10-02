@@ -51,7 +51,7 @@ approver.bin.counts.hard <- function(data) {
 }
 
 # DF/Tibble -> Tibble; Creates Bin Columns of 0s in case column is not present, for approver amount bins
-validate.approver.age.bins.hard <- function(data) {
+validate.approver.amt.bins.hard <- function(data) {
   data <- if (!has_name(data, "0")) {mutate(data, `0` = c(0))} else {data}
   data <- if (!has_name(data, "50000")) {mutate(data, `50000` = c(0))} else {data}
   data <- if (!has_name(data, "250000")) {mutate(data, `250000` = c(0))} else {data}
@@ -59,16 +59,26 @@ validate.approver.age.bins.hard <- function(data) {
   data
 }
 
+# DF/Tibble -> Tibble; Creates Bin Columns of 0s in case column is not present, for approver count bins
+validate.approver.cnt.bins.hard <- function(data) {
+  data <- if (!has_name(data, "0")) {mutate(data, `0` = c(0))} else {data}
+  data <- if (!has_name(data, "7")) {mutate(data, `7` = c(0))} else {data}
+  data <- if (!has_name(data, "14")) {mutate(data, `14` = c(0))} else {data}
+  data <- if (!has_name(data, "30")) {mutate(data, `30` = c(0))} else {data}
+  data
+}
+
 approver_cnt_bins <- approval_raw %>% 
   approver.age.binning.hard() %>% 
   approver.bin.counts.hard() %>%
+  validate.approver.cnt.bins.hard() %>%
   rename(`0 to 7` = `0`, `7 to 14` = `7`, `14 to 30` = `14`, `30+` = `30`)
 
 
 approver_amt_bins <- approval_raw %>% 
   approver.amount.binning.hard() %>% 
   approver.bin.counts.hard() %>% 
-  validate.approver.age.bins.hard() %>%
+  validate.approver.amt.bins.hard() %>%
   select(`0`, `50000`, `250000`, `5e+05`) %>%
   rename(`< $50k` = `0`, `$50k to $250k` = `50000`, `$250k to $500k` = `250000`, `$500k+` = `5e+05`)
 
@@ -87,7 +97,8 @@ approval_detail_table_req <- approval_raw %>%
   select(`PO No.`) %>%
   as_vector() %>%
   get.reqs.tibble() %>% 
-  rename(`Line 1 Description` = `req_description`, `Req Approval Date` = `req_approval_date`, `Buyer` = `req_buyer`)
+  rename(`Line 1 Description` = `req_description`, `Req Approval Date` = `req_approval_date`, `Buyer` = `req_buyer`) %>% 
+  mutate_at("Buyer", substr, start = 0, stop = 2) 
 
 approval_detail_table <- bind_cols(approval_detail_table_po, approval_detail_table_req) %>% 
   mutate(`Overall Age` = date_now - `Req Approval Date` ) %>% 
