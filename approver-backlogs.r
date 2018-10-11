@@ -3,7 +3,7 @@
 # To get, tidy, and display backlog information for Approver (Peter)
 
 # NOTE: This file is a part of "buyer-backlogs.rmd" report, and it depends
-#         on the dependencies of the report. 
+#         on the dependencies of the report.
 
 
 # Init, File Imports ------------------------------------------------------
@@ -24,8 +24,13 @@ usd <- dollar_format(largest_with_cents = 5000, prefix = "$")
 
 # Deduped since upstream query returns duplicate data
 approval_raw <- approval_raw %>% 
+  distinct(`PO No.`, `Line`, .keep_all = TRUE) %>% 
+  group_by(`PO No.`) %>% 
+  mutate(`Sum_of_PO_Amt` = sum(`Merch_Amt`)) %>% 
+  select(-Line, -Merch_Amt) %>% 
   distinct(`PO No.`, .keep_all = TRUE) %>% 
-  mutate(Age = date_now - date(`Date/Time`))
+  mutate(Age = date_now - date(`Date/Time`)) %>% 
+  ungroup(`PO No.`)
 
 # DF/Tibble -> Tibble; Bins the Age for the incoming dataframe, designed for approver use
 approver.age.binning.hard <- function(data) {
