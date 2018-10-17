@@ -18,8 +18,17 @@ db_url <- if (Sys.info()[[1]] == "Linux") {"mongodb://127.0.0.1:27017"} else {"m
 
 mongo_approval_worklist <- mongo(collection = "timemachine_pp_worklist", db = "test", url = db_url)
 
+# Export to temp file 
+mongo_approval_worklist$export(file("approval_worklist_timemachine.json"))
+
+# Read temp file as Dataframe
+approval_worklist_timemachine_json <- stream_in(file("approval_worklist_timemachine.json"))
+
+# Slice mongodb id off and tibble conversion, otherwise as_tibble won't work 
+approval_worklist_timemachine <- as_tibble(approval_worklist_timemachine_json[2:11])
+
 # (WIP)
-approval_worklist_timemachine %>% mutate("50K+" = Sum_of_PO_Amt > 50000) %>% group_by(`50K+`, Archive_Time) %>% summarize(Cnt = n())
+approval_worklist_timemachine <- approval_worklist_timemachine %>% mutate("50K+" = Sum_of_PO_Amt > 50000) %>% group_by(`50K+`, Archive_Time) %>% summarize(Cnt = n())
 
 # A tibble: 2 x 3
 # Groups:   50K+ [?]
