@@ -11,9 +11,8 @@ source("./buyer-backlogs-90dayplus.r")
 source("./buyer-backlogs-amounts.r")
 source("./approver-backlogs.r")
 
-#source("./time_machine-mongo.r")
+source("./time_machine-mongo.r")
 source("./time_machine-graphs.r")
-#source("./buyer-hist.r")
 ```
 # Buyer Backlog Report of `r data_date`
 

@@ -16,7 +16,8 @@ db_url <- if (Sys.info()[[1]] == "Linux") {"mongodb://127.0.0.1:27017"} else {"m
 
 # Approver Backlog Graphs -------------------------------------------------
 
-mongo_approval_worklist <- mongo(collection = "timemachine_pp_worklist", db = "test", url = db_url)
+# Re-using connections, see notes around L54 in this file. 
+# mongo_approval_worklist <- mongo(collection = "timemachine_pp_worklist", db = "test", url = db_url)
 
 # Export to temp file
 mongo_approval_worklist$export(file("approval_worklist_timemachine.json"))
@@ -46,14 +47,17 @@ plot_ly(data = approval_worklist_timemachine) %>%
 
 # Buyers Backlog Graphs ---------------------------------------------------
 
-mongo_backlog_plain <- mongo(collection = "timemachine_backlog_plain", db = "test", url = db_url)
-mongo_backlog_hold <- mongo(collection = "timemachine_backlog_hold", db = "test", url = db_url)
-mongo_backlog_out_to_bid <- mongo(collection = "timemachine_backlog_out_to_bid", db = "test", url = db_url)
+# Re-using the connections from the time_machine-mongo.r file, so we don't need
+#   them in the pipeline. But they are still useful for debug so don't break
+#   their dreams.
+
+# mongo_backlog_plain <- mongo(collection = "timemachine_backlog_plain", db = "test", url = db_url)
+# mongo_backlog_hold <- mongo(collection = "timemachine_backlog_hold", db = "test", url = db_url)
+# mongo_backlog_out_to_bid <- mongo(collection = "timemachine_backlog_out_to_bid", db = "test", url = db_url)
 
 mongo_backlog_plain$export(file("timemachine_backlog_plain.json"))
 mongo_backlog_hold$export(file("timemachine_backlog_hold.json"))
 mongo_backlog_out_to_bid$export(file("timemachine_backlog_out_to_bid.json"))
-
 
 backlog_plain_timemachine_json <- stream_in(file("timemachine_backlog_plain.json"))
 backlog_hold_timemachine_json <- stream_in(file("timemachine_backlog_hold.json"))
