@@ -43,6 +43,42 @@ plot_ly(data = approval_worklist_timemachine) %>%
   add_lines(x = ~Archive_Time, y = ~PP, name = "PP's List (> $50K)") %>% 
   add_lines(x = ~Archive_Time, y = ~Total, name = "Total") %>% 
   layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+
+# Buyers Backlog Graphs ---------------------------------------------------
+
+mongo_backlog_plain <- mongo(collection = "timemachine_backlog_plain", db = "test", url = db_url)
+mongo_backlog_hold <- mongo(collection = "timemachine_backlog_hold", db = "test", url = db_url)
+mongo_backlog_out_to_bid <- mongo(collection = "timemachine_backlog_out_to_bid", db = "test", url = db_url)
+
+mongo_backlog_plain$export(file("timemachine_backlog_plain.json"))
+mongo_backlog_hold$export(file("timemachine_backlog_hold.json"))
+mongo_backlog_out_to_bid$export(file("timemachine_backlog_out_to_bid.json"))
+
+
+backlog_plain_timemachine_json <- stream_in(file("timemachine_backlog_plain.json"))
+backlog_hold_timemachine_json <- stream_in(file("timemachine_backlog_hold.json"))
+backlog_out_to_bid_timemachine_json <- stream_in(file("timemachine_backlog_out_to_bid.json"))
+
+backlog_plain_timemachine <- as_tibble(backlog_plain_timemachine_json[2:16])
+backlog_hold_timemachine <- as_tibble(backlog_hold_timemachine_json[2:16])
+backlog_out_to_bid_timemachine <- as_tibble(backlog_out_to_bid_timemachine_json[2:16])
+
+backlog_plain_timemachine <- backlog_plain_timemachine %>% 
+  group_by(Archive_Time, Category) %>% 
+  summarize(Cnt = n()) %>% 
+  ungroup(Archive_Time)
+
+backlog_hold_timemachine <- backlog_hold_timemachine %>% 
+  group_by(Archive_Time, Category) %>%
+  summarize(Cnt = n()) %>% 
+  ungroup(Archive_Time)
+  
+backlog_out_to_bid_timemachine <- backlog_out_to_bid_timemachine %>% 
+  group_by(Archive_Time, Category) %>% 
+  summarize(Cnt = n()) %>% 
+  ungroup(Archive_Time)
+
+
 # A tibble: 2 x 3
 # Groups:   50K+ [?]
 #`50K+` Archive_Time   Cnt

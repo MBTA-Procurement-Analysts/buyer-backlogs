@@ -5,7 +5,7 @@ output: html_document
 ```{r include=FALSE, warning=FALSE}
 print("Buyer Backlog R Scipt")
 library(lubridate)
-source("./data_import_manual.r")
+source("./data_import.r")
 source("./buyer-backlogs.r")
 source("./buyer-backlogs-90dayplus.r")
 source("./buyer-backlogs-amounts.r")
@@ -166,10 +166,23 @@ kable(backlog_amount_kable) %>%
   row_spec(sum(backlog_amt_row_num_vec) + 1, bold = TRUE)
 ```
 
-```{r}
+```{r echo=FALSE, out.width="100%", out.height="400px"}
 plot_ly(data = approval_worklist_timemachine) %>% 
   add_lines(x = ~Archive_Time, y = ~PP, name = "PP's List (> $50K)") %>% 
   add_lines(x = ~Archive_Time, y = ~Total, name = "Total") %>% 
+  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+
+
+plot_ly(backlog_plain_timemachine) %>% 
+  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>% 
+  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+
+plot_ly(backlog_hold_timemachine) %>% 
+  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>%
+  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+
+plot_ly(backlog_out_to_bid_timemachine) %>% 
+  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>%  
   layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
 ```
 
