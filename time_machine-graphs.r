@@ -59,24 +59,35 @@ backlog_plain_timemachine_json <- stream_in(file("timemachine_backlog_plain.json
 backlog_hold_timemachine_json <- stream_in(file("timemachine_backlog_hold.json"))
 backlog_out_to_bid_timemachine_json <- stream_in(file("timemachine_backlog_out_to_bid.json"))
 
-backlog_plain_timemachine <- as_tibble(backlog_plain_timemachine_json[2:16])
-backlog_hold_timemachine <- as_tibble(backlog_hold_timemachine_json[2:16])
-backlog_out_to_bid_timemachine <- as_tibble(backlog_out_to_bid_timemachine_json[2:16])
+backlog_plain_timemachine_raw <- as_tibble(backlog_plain_timemachine_json[2:16])
+backlog_hold_timemachine_raw <- as_tibble(backlog_hold_timemachine_json[2:16])
+backlog_out_to_bid_timemachine_raw <- as_tibble(backlog_out_to_bid_timemachine_json[2:16])
 
-backlog_plain_timemachine <- backlog_plain_timemachine %>% 
-  group_by(Archive_Time, Category) %>% 
-  summarize(Cnt = n()) %>% 
-  ungroup(Archive_Time)
+# DF/Tibble , bool -> Tibble
+# Summarizes Data for Buyer Backlog Timemachine Trend Graphs
+# Copying code to 6 different places is hard, so...
+summarize.time.machine.hard <- function(data, is90dayPlus) {
+  if (is90dayPlus) {
+    data <- data %>% filter(Age >= 90)
+  }
+  data %>% 
+    group_by(Archive_Time, Category) %>% 
+    summarize(Cnt = n()) %>% 
+    ungroup(Archive_Time)
+}
 
-backlog_hold_timemachine <- backlog_hold_timemachine %>% 
-  group_by(Archive_Time, Category) %>%
-  summarize(Cnt = n()) %>% 
-  ungroup(Archive_Time)
-  
-backlog_out_to_bid_timemachine <- backlog_out_to_bid_timemachine %>% 
-  group_by(Archive_Time, Category) %>% 
-  summarize(Cnt = n()) %>% 
-  ungroup(Archive_Time)
+backlog_plain_timemachine_90dayplus <- summarize.time.machine.hard(backlog_plain_timemachine_raw, TRUE)
+backlog_hold_timemachine_90dayplus <- summarize.time.machine.hard(backlog_hold_timemachine_raw, TRUE)
+backlog_out_to_bid_timemachine_90dayplus <- summarize.time.machine.hard(backlog_out_to_bid_timemachine_raw, TRUE)
+
+backlog_plain_timemachine <- summarize.time.machine.hard(backlog_plain_timemachine_raw, FALSE)
+backlog_hold_timemachine <- summarize.time.machine.hard(backlog_hold_timemachine_raw, FALSE)
+backlog_out_to_bid_timemachine <- summarize.time.machine.hard(backlog_out_to_bid_timemachine_raw, FALSE)
+
+
+
+# Buyer Backlog Over 90 Days ----------------------------------------------
+
 
 
 # A tibble: 2 x 3

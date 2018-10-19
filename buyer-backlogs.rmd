@@ -196,9 +196,9 @@ plot_ly(backlog_plain_timemachine) %>%
 ### Req Older than 90 Days Trend
 
 ```{r echo=FALSE, warning=FALSE, out.width="100%", out.height="400px"}
-#plot_ly(backlog_plain_timemachine) %>% 
-#  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>% 
-#  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+plot_ly(backlog_plain_timemachine_90dayplus) %>% 
+  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>% 
+  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
 
 #plot_ly(backlog_hold_timemachine) %>% 
 #  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>%
