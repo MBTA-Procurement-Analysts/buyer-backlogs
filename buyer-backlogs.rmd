@@ -166,24 +166,47 @@ kable(backlog_amount_kable) %>%
   row_spec(sum(backlog_amt_row_num_vec) + 1, bold = TRUE)
 ```
 
-```{r echo=FALSE, out.width="100%", out.height="400px"}
+## PP's Worklist Trend
+```{r echo=FALSE, warning=FALSE, out.width="100%", out.height="400px"}
 plot_ly(data = approval_worklist_timemachine) %>% 
   add_lines(x = ~Archive_Time, y = ~PP, name = "PP's List (> $50K)") %>% 
   add_lines(x = ~Archive_Time, y = ~Total, name = "Total") %>% 
   layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+```
 
+## Buyers Backlog Trend
 
+### All Backlog Reqs
+
+```{r echo=FALSE, warning=FALSE, out.width="100%", out.height="400px"}
 plot_ly(backlog_plain_timemachine) %>% 
   add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>% 
   layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
 
-plot_ly(backlog_hold_timemachine) %>% 
-  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>%
-  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+#plot_ly(backlog_hold_timemachine) %>% 
+#  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>%
+#  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
 
-plot_ly(backlog_out_to_bid_timemachine) %>% 
-  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>%  
-  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+#plot_ly(backlog_out_to_bid_timemachine) %>% 
+#  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>%  
+#  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+
 ```
 
+### Req Older than 90 Days Trend
+
+```{r echo=FALSE, warning=FALSE, out.width="100%", out.height="400px"}
+plot_ly(backlog_plain_timemachine) %>% 
+  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>% 
+  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+
+#plot_ly(backlog_hold_timemachine) %>% 
+#  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>%
+#  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+
+#plot_ly(backlog_out_to_bid_timemachine) %>% 
+#  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>%  
+#  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+
+```
 Using data obtained at `r data_date`. Code version `r code_version`.
