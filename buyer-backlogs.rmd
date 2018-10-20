@@ -10,6 +10,9 @@ source("./buyer-backlogs.r")
 source("./buyer-backlogs-90dayplus.r")
 source("./buyer-backlogs-amounts.r")
 source("./approver-backlogs.r")
+
+source("./time_machine-mongo.r")
+source("./time_machine-graphs.r")
 ```
 # Buyer Backlog Report of `r data_date`
 
@@ -162,4 +165,47 @@ kable(backlog_amount_kable) %>%
   row_spec(sum(backlog_amt_row_num_vec) + 1, bold = TRUE)
 ```
 
+## PP's Worklist Trend
+```{r echo=FALSE, warning=FALSE, out.width="100%", out.height="400px"}
+plot_ly(data = approval_worklist_timemachine) %>% 
+  add_lines(x = ~Archive_Time, y = ~PP, name = "PP's List (> $50K)") %>% 
+  add_lines(x = ~Archive_Time, y = ~Total, name = "Total") %>% 
+  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+```
+
+## Buyers Backlog Trend
+
+### All Backlog Reqs
+
+```{r echo=FALSE, warning=FALSE, out.width="100%", out.height="400px"}
+plot_ly(backlog_plain_timemachine) %>% 
+  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>% 
+  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+
+#plot_ly(backlog_hold_timemachine) %>% 
+#  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>%
+#  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+
+#plot_ly(backlog_out_to_bid_timemachine) %>% 
+#  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>%  
+#  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+
+```
+
+### Req Older than 90 Days Trend
+
+```{r echo=FALSE, warning=FALSE, out.width="100%", out.height="400px"}
+plot_ly(backlog_plain_timemachine_90dayplus) %>% 
+  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>% 
+  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+
+#plot_ly(backlog_hold_timemachine) %>% 
+#  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>%
+#  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+
+#plot_ly(backlog_out_to_bid_timemachine) %>% 
+#  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>%  
+#  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+
+```
 Using data obtained at `r data_date`. Code version `r code_version`.

@@ -81,8 +81,15 @@ backlog_raw <- backlog_raw %>%
 backlog_nohold <- backlog_raw %>%
   filter(`Hold From Further Processing` == "N" & `Out-to-Bid` == "Not Requested")
 
+# NOTE: In a perfect world, Holds and Out-to-Bid status should be mutually
+#         exclusive -- there should not be cases where a Req has both statuses.
+#         However, some Reqs might not have their hold status removed in FMIS, 
+#         and when they are sent out to bid, both hold and out-to-bid markers
+#         would be true in FMIS. Thus, to prevent double counting, this code will
+#         will assume all Reqs with both Hold and Out-to-bid status are not on hold
+#         and are out-to-bid only; hence the filtering below.
 backlog_hold <- backlog_raw %>%
-  filter(`Hold From Further Processing` == "Y")
+  filter(`Hold From Further Processing` == "Y" & !`Out-to-Bid` == "Requested")
 
 # Split Out-to-bid
 backlog_out_to_bid <- backlog_raw %>%
