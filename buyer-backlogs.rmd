@@ -5,12 +5,14 @@ output: html_document
 ```{r include=FALSE, warning=FALSE}
 print("Buyer Backlog R Scipt")
 library(lubridate)
-source("./data_import.r")
+source("./data_import_manual.r")
 source("./buyer-backlogs.r")
 source("./buyer-backlogs-90dayplus.r")
 source("./buyer-backlogs-amounts.r")
 source("./approver-backlogs.r")
 
+# NOTE: The following file writes to the specified mongodb, comment out
+#         the line while debugging to avoid accidental writes
 source("./time_machine-mongo.r")
 source("./time_machine-graphs.r")
 ```
@@ -168,8 +170,7 @@ kable(backlog_amount_kable) %>%
 ## PP's Worklist Trend
 ```{r echo=FALSE, warning=FALSE, out.width="100%", out.height="400px"}
 plot_ly(data = approval_worklist_timemachine) %>% 
-  add_lines(x = ~Archive_Time, y = ~PP, name = "PP's List (> $50K)") %>% 
-  add_lines(x = ~Archive_Time, y = ~Total, name = "Total") %>% 
+  add_lines(x = ~Archive_Time, y = ~Cnt, name = "PP's List (> $50K)") %>% 
   layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
 ```
 
@@ -178,34 +179,52 @@ plot_ly(data = approval_worklist_timemachine) %>%
 ### All Backlog Reqs
 
 ```{r echo=FALSE, warning=FALSE, out.width="100%", out.height="400px"}
-plot_ly(backlog_plain_timemachine) %>% 
-  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>% 
+backlog_plain_timemachine_inv_plot <- backlog_plain_timemachine %>% 
+  filter(Category == "INV") %>% 
+  plot_ly() %>% 
+  add_lines(x = ~Archive_Time, y = ~Cnt, name = "INV") %>% 
   layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
 
-#plot_ly(backlog_hold_timemachine) %>% 
-#  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>%
-#  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
 
-#plot_ly(backlog_out_to_bid_timemachine) %>% 
-#  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>%  
-#  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+backlog_plain_timemachine_ninv_plot <- backlog_plain_timemachine %>% 
+  filter(Category == "NINV") %>% 
+  plot_ly() %>% 
+  add_lines(x = ~Archive_Time, y = ~Cnt, name = "NINV") %>% 
+  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+
+backlog_plain_timemachine_se_plot <- backlog_plain_timemachine %>% 
+  filter(Category == "SE") %>% 
+  plot_ly() %>% 
+  add_lines(x = ~Archive_Time, y = ~Cnt, name = "SE") %>% 
+  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+
+subplot(backlog_plain_timemachine_inv_plot, backlog_plain_timemachine_ninv_plot, backlog_plain_timemachine_se_plot)
 
 ```
 
 ### Req Older than 90 Days Trend
 
 ```{r echo=FALSE, warning=FALSE, out.width="100%", out.height="400px"}
-plot_ly(backlog_plain_timemachine_90dayplus) %>% 
-  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>% 
+backlog_plain_timemachine_90dayplus_inv_plot <- backlog_plain_timemachine_90dayplus %>% 
+  filter(Category == "INV") %>% 
+  plot_ly() %>% 
+  add_lines(x = ~Archive_Time, y = ~Cnt, name = "INV") %>% 
   layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
 
-#plot_ly(backlog_hold_timemachine) %>% 
-#  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>%
-#  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
 
-#plot_ly(backlog_out_to_bid_timemachine) %>% 
-#  add_lines(x = ~Archive_Time, y = ~Cnt, color = ~Category) %>%  
-#  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+backlog_plain_timemachine_90dayplus_ninv_plot <- backlog_plain_timemachine_90dayplus %>% 
+  filter(Category == "NINV") %>% 
+  plot_ly() %>% 
+  add_lines(x = ~Archive_Time, y = ~Cnt, name = "NINV") %>% 
+  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+
+backlog_plain_timemachine_90dayplus_se_plot <- backlog_plain_timemachine_90dayplus %>% 
+  filter(Category == "SE") %>% 
+  plot_ly() %>% 
+  add_lines(x = ~Archive_Time, y = ~Cnt, name = "SE") %>% 
+  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
+
+subplot(backlog_plain_timemachine_90dayplus_inv_plot, backlog_plain_timemachine_90dayplus_ninv_plot, backlog_plain_timemachine_90dayplus_se_plot)
 
 ```
 Using data obtained at `r data_date`. Code version `r code_version`.

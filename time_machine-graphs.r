@@ -28,22 +28,14 @@ approval_worklist_timemachine_json <- stream_in(file("approval_worklist_timemach
 # Slice mongodb id off and tibble conversion, otherwise as_tibble won't work 
 approval_worklist_timemachine <- as_tibble(approval_worklist_timemachine_json[2:11])
 
-# (WIP)
+# New Function of Wrangling Approver Backlog:
+# This function simply filters non-PP (<$50k) entries, per discussion of the total amount of backlogs
+#   being no longer necessary.
 approval_worklist_timemachine <- approval_worklist_timemachine %>% 
-  mutate("50K+" = if_else(Sum_of_PO_Amt > 50000, "PP", "Total")) %>% 
-  group_by(`50K+`, Archive_Time) %>% 
-  summarize(Cnt = n()) %>% 
- # mutate_at("Archive_Time", ymd) %>% 
-  group_by(Archive_Time) %>%
-  mutate(Cnt = if_else(`50K+` == "Total", sum(Cnt), Cnt)) %>% 
-  spread(., "50K+", Cnt) %>% 
-  ungroup(Archive_Time)
+  filter(Sum_of_PO_Amt >= 50000) %>% 
+  group_by(Archive_Time) %>% 
+  summarize(Cnt = n()) 
   
-
-plot_ly(data = approval_worklist_timemachine) %>% 
-  add_lines(x = ~Archive_Time, y = ~PP, name = "PP's List (> $50K)") %>% 
-  add_lines(x = ~Archive_Time, y = ~Total, name = "Total") %>% 
-  layout(xaxis = list(title = "Date"), yaxis = list(title = "Count")) 
 
 # Buyers Backlog Graphs ---------------------------------------------------
 

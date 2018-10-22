@@ -22,15 +22,21 @@ usd <- dollar_format(largest_with_cents = 5000, prefix = "$")
 
 # Data Wrangling ----------------------------------------------------------
 
-# Deduped since upstream query returns duplicate data
+# Using Original Data for Historical Data Importing
 approval_raw <- approval_raw %>% 
-  distinct(`PO No.`, `Line`, .keep_all = TRUE) %>% 
-  group_by(`PO No.`) %>% 
-  mutate(`Sum_of_PO_Amt` = sum(`Merch_Amt`)) %>% 
-  select(-Line, -Merch_Amt) %>% 
   distinct(`PO No.`, .keep_all = TRUE) %>% 
-  mutate(Age = date_now - date(`Date/Time`)) %>% 
-  ungroup(`PO No.`)
+  mutate(Age = date_now - date(`Date/Time`))
+
+# Deduped since upstream query returns duplicate data
+
+# approval_raw <- approval_raw %>% 
+#   distinct(`PO No.`, `Line`, .keep_all = TRUE) %>% 
+#   group_by(`PO No.`) %>% 
+#   mutate(`Sum_of_PO_Amt` = sum(`Merch_Amt`)) %>% 
+#   select(-Line, -Merch_Amt) %>% 
+#   distinct(`PO No.`, .keep_all = TRUE) %>% 
+#   mutate(Age = date_now - date(`Date/Time`)) %>% 
+#   ungroup(`PO No.`)
 
 # DF/Tibble -> Tibble; Bins the Age for the incoming dataframe, designed for approver use
 approver.age.binning.hard <- function(data) {
