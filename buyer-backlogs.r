@@ -223,3 +223,12 @@ backlog_plot <- full_join(full_join(backlog_out_to_bid_plot, backlog_not_out_to_
   gather(Type, Count, -Buyer, -Category) %>%
   arrange(Category, desc(Buyer)) %>%
   mutate_at("Buyer", substr, start = 0, stop = 2)
+
+
+# Omitted Buyer Display for the Bay Graph ---------------------------------
+
+active_buyers <- backlog_all_table %>% ungroup(Buyer) %>% select(Buyer)
+all_buyers <- buyers_cat %>% select(Buyer)
+
+hidden_buyers <- anti_join(all_buyers, active_buyers) %>% 
+  mutate_at("Buyer", substr, start = 0, stop = 2)
