@@ -22,7 +22,17 @@ usd <- dollar_format(largest_with_cents = 5000, prefix = "$")
 
 # Data Wrangling ----------------------------------------------------------
 
+# Data Processing for raw data before 2018-10-11, those older data has
+#   duplication in Sum amount on the FMIS query level, and the downstream
+#   categorization of <$50K is affected. 
+# This function is left here for future references.
+
+# approval_raw <- approval_raw %>% 
+#   distinct(`PO No.`, .keep_all = TRUE) %>% 
+#   mutate(Age = date_now - date(`Date/Time`))
+
 # Deduped since upstream query returns duplicate data
+
 approval_raw <- approval_raw %>% 
   distinct(`PO No.`, `Line`, .keep_all = TRUE) %>% 
   group_by(`PO No.`) %>% 
