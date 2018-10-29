@@ -34,7 +34,7 @@ backlog_plot_ninv <- backlog_plot %>%
           color = ~Type,
           type = "bar", 
           colors = c("#99D594","#FFFFBF","#FC8D59"),
-          width = "20px",
+          width = "18px",
           legendgroup = ~Type) %>% 
   layout(yaxis = list(autorange = "reversed", fixedrange = TRUE), 
          xaxis = list(fixedrange = TRUE), 
@@ -49,7 +49,7 @@ backlog_plot_se <- backlog_plot %>%
           type = "bar", 
           colors = c("#99D594","#FFFFBF","#FC8D59"),
           legendgroup = ~Type, 
-          width = "20px",
+          width = "18px",
           showlegend = F) %>% 
   layout(yaxis = list(autorange = "reversed", fixedrange = TRUE), 
          xaxis = list(fixedrange = TRUE), 
@@ -64,7 +64,7 @@ backlog_plot_inv <- backlog_plot %>%
           type = "bar", 
           colors = c("#99D594","#FFFFBF","#FC8D59"),
           legendgroup = ~Type, 
-          width = "20px",
+          width = "18px",
           showlegend = F) %>% 
   layout(yaxis = list(autorange = "reversed", fixedrange = TRUE), 
          xaxis = list(fixedrange = TRUE), 
@@ -79,7 +79,7 @@ subplot(backlog_plot_ninv, backlog_plot_se, backlog_plot_inv, nrows = 3, margin 
 
 ### Reqs Over 90 Days 
 
-```{r echo=FALSE, out.width="100%", out.height="400px"}
+```{r echo=FALSE, out.width="100%", out.height="375px"}
 
 backlog_plot_90dayplus_ninv <- backlog_plot_90dayplus %>% 
   filter(Category == "NINV") %>% 
@@ -89,7 +89,7 @@ backlog_plot_90dayplus_ninv <- backlog_plot_90dayplus %>%
           color = ~Type,
           type = "bar", 
           colors = c("#99D594","#FFFFBF","#FC8D59"),
-          width = "20px",
+          width = "18px",
           legendgroup = ~Type) %>% 
   layout(yaxis = list(autorange = "reversed", fixedrange = TRUE), 
          xaxis = list(fixedrange = TRUE), 
@@ -103,7 +103,7 @@ backlog_plot_90dayplus_se <- backlog_plot_90dayplus %>%
           color = ~Type,
           type = "bar", 
           colors = c("#99D594","#FFFFBF","#FC8D59"),
-          width = "20px",
+          width = "18px",
           legendgroup = ~Type,
           showlegend = F) %>% 
   layout(yaxis = list(autorange = "reversed", fixedrange = TRUE), 
@@ -118,7 +118,7 @@ backlog_plot_90dayplus_inv <- backlog_plot_90dayplus %>%
           color = ~Type,
           type = "bar", 
           colors = c("#99D594","#FFFFBF","#FC8D59"),
-          width = "20px",
+          width = "18px",
           legendgroup = ~Type,
           showlegend = F) %>% 
   layout(yaxis = list(autorange = "reversed", fixedrange = TRUE), 
