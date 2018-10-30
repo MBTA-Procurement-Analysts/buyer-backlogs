@@ -33,7 +33,7 @@ get.req.tibble <- function (poNum) {
       req_json <- fromJSON(rawToChar(req_request$content))
       req_approval_date <- date(parse_date_time(substr(req_json$Approved_On, 1, 10), "%Y-%m-%d"))
       req_description <- req_json$lines[[1]][1,]$More_Info %>% str_trunc(53)
-      req_buyer <- req_json$Buyer
+      req_buyer <- if_else(is.nan(req_json$Buyer), "", req_json$Buyer)
       req_tibble <- tibble(req_description, req_approval_date, req_buyer)
     },
     error = function(cond) {
