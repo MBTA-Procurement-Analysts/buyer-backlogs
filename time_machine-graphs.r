@@ -95,6 +95,7 @@ backlog_timemachine_90dayplus_sum <-
     full_join(backlog_plain_timemachine_90dayplus_sum, 
               backlog_hold_timemachine_90dayplus_sum), 
     backlog_out_to_bid_timemachine_90dayplus_sum) %>% 
+  replace_na(list(holdCnt = 0)) %>% 
   mutate(Cnt = plainCnt + holdCnt + out_to_bidCnt)
 # Buyer Backlog Over 90 Days ----------------------------------------------
 
