@@ -200,7 +200,7 @@ plot_ly(data = approval_worklist_timemachine) %>%
 
 ## Buyers Backlog Trend
 
-### All Backlog Reqs
+### All Actionable Backlog Reqs
 
 ```{r echo=FALSE, warning=FALSE, out.width="100%", out.height="400px", eval = use_time_machine}
 backlog_plain_timemachine_inv_plot <- backlog_plain_timemachine %>% 
@@ -229,27 +229,31 @@ subplot(backlog_plain_timemachine_inv_plot, backlog_plain_timemachine_ninv_plot,
 ### Req Older than 90 Days Trend
 
 ```{r echo=FALSE, warning=FALSE, out.width="100%", out.height="400px", eval = use_time_machine}
-backlog_plain_timemachine_90dayplus_inv_plot <- backlog_plain_timemachine_90dayplus %>% 
+backlog_timemachine_90dayplus_sum_inv_plot <- backlog_timemachine_90dayplus_sum %>% 
   filter(Category == "INV") %>% 
   plot_ly() %>% 
   add_lines(x = ~Archive_Time, y = ~Cnt, name = "INV") %>% 
   layout(xaxis = list(title = "Date", fixedrange = TRUE), yaxis = list(title = "Count", fixedrange = TRUE))
 
-backlog_plain_timemachine_90dayplus_ninv_plot <- backlog_plain_timemachine_90dayplus %>% 
+backlog_timemachine_90dayplus_sum_ninv_plot <- backlog_timemachine_90dayplus_sum %>% 
   filter(Category == "NINV") %>% 
   plot_ly() %>% 
   add_lines(x = ~Archive_Time, y = ~Cnt, name = "NINV") %>% 
   layout(xaxis = list(title = "Date", fixedrange = TRUE), yaxis = list(title = "Count", fixedrange = TRUE))
 
-backlog_plain_timemachine_90dayplus_se_plot <- backlog_plain_timemachine_90dayplus %>% 
+backlog_timemachine_90dayplus_sum_se_plot <- backlog_timemachine_90dayplus_sum %>% 
   filter(Category == "SE") %>% 
   plot_ly() %>% 
   add_lines(x = ~Archive_Time, y = ~Cnt, name = "SE") %>% 
   layout(xaxis = list(title = "Date", fixedrange = TRUE), yaxis = list(title = "Count", fixedrange = TRUE))
 
-subplot(backlog_plain_timemachine_90dayplus_inv_plot, backlog_plain_timemachine_90dayplus_ninv_plot, backlog_plain_timemachine_90dayplus_se_plot) %>% 
+subplot(backlog_timemachine_90dayplus_sum_inv_plot, 
+        backlog_timemachine_90dayplus_sum_ninv_plot, 
+        backlog_timemachine_90dayplus_sum_se_plot) %>% 
   config(displayModeBar = FALSE)
   
-
 ```
+*Includes Out-to-bid and on Hold Reqs.*
+
 Using data obtained at `r data_date`. Code version `r code_version`.
+

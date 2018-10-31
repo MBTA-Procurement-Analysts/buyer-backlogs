@@ -28,7 +28,7 @@ get.req.tibble <- function (poNum) {
     {
       po_request <- curl_fetch_memory(str_glue("{api_base_url}po/{poNum}"))
       po_json <- fromJSON(rawToChar(po_request$content))
-      req_num <- trimws(po_json$lines[[1]][1,]$Requisition[[1]])
+      req_num <- trimws(po_json$lines[[1]][1,]$Requisition[[2]])
       req_request <- curl_fetch_memory(str_glue("{api_base_url}req/{req_num}"))
       req_json <- fromJSON(rawToChar(req_request$content))
       req_approval_date <- date(parse_date_time(substr(req_json$Approved_On, 1, 10), "%Y-%m-%d"))
@@ -49,5 +49,7 @@ get.req.tibble <- function (poNum) {
 # Vec<Chr> -> Tibble
 # Wrapper for batch running get.req.table 
 get.reqs.tibble <- function (poNums) {
+  print(poNums)
+  print(map(poNums, get.req.tibble))
   bind_rows(map(poNums, get.req.tibble))
 }

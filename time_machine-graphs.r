@@ -35,7 +35,7 @@ approval_worklist_timemachine <- approval_worklist_timemachine %>%
   filter(Sum_of_PO_Amt >= 50000) %>% 
   group_by(Archive_Time) %>% 
   summarize(Cnt = n()) 
-  
+
 
 # Buyers Backlog Graphs ---------------------------------------------------
 
@@ -81,7 +81,21 @@ backlog_hold_timemachine <- summarize.time.machine.hard(backlog_hold_timemachine
 backlog_out_to_bid_timemachine <- summarize.time.machine.hard(backlog_out_to_bid_timemachine_raw, FALSE)
 
 
+# Buyer Backlog Over 90 Days (Summing Plain/Hold/Out-to-Bids) -------------
 
+backlog_plain_timemachine_90dayplus_sum <- backlog_plain_timemachine_90dayplus %>% 
+  rename(`plainCnt` = `Cnt`)
+backlog_hold_timemachine_90dayplus_sum <- backlog_hold_timemachine_90dayplus %>% 
+  rename(`holdCnt` = `Cnt`)
+backlog_out_to_bid_timemachine_90dayplus_sum <- backlog_out_to_bid_timemachine_90dayplus %>% 
+  rename(`out_to_bidCnt` = `Cnt`)
+
+backlog_timemachine_90dayplus_sum <- 
+  full_join(
+    full_join(backlog_plain_timemachine_90dayplus_sum, 
+              backlog_hold_timemachine_90dayplus_sum), 
+    backlog_out_to_bid_timemachine_90dayplus_sum) %>% 
+  mutate(Cnt = plainCnt + holdCnt + out_to_bidCnt)
 # Buyer Backlog Over 90 Days ----------------------------------------------
 
 
