@@ -33,15 +33,17 @@ get.req.tibble <- function (poNum) {
       # The other field in the collection is the Req Line #.
       # Thus, with some rage-filled debug session, the call to get Req ID is 
       #   shaped below.
-      req_num <- trimws(if_else(is.character(po_json$lines[[1]][1,]$Requisition[[1]]),
-                                po_json$lines[[1]][1,]$Requisition[[1]],
-                                as.character(po_json$lines[[1]][1,]$Requisition[[2]])))
+      req_num <- trimws(po_json$lines[[1]][1,]$Requisition$Req_ID)
       req_request <- curl_fetch_memory(str_glue("{api_base_url}req/{req_num}"))
       req_json <- fromJSON(rawToChar(req_request$content))
       req_approval_date <- date(parse_date_time(substr(req_json$Approved_On, 1, 10), "%Y-%m-%d"))
       req_description <- req_json$lines[[1]][1,]$More_Info %>% str_trunc(53)
       req_buyer <- if_else(is.nan(req_json$Buyer), "", req_json$Buyer)
-      req_tibble <- tibble(req_description, req_approval_date, req_buyer)
+      print(req_description)
+      if (count(tibble(req_description, req_approval_date, req_buyer)) != 0) {
+        req_tibble <- tibble(req_description, req_approval_date, req_buyer)
+      }
+      
     },
     error = function(cond) {
       print(cond)
