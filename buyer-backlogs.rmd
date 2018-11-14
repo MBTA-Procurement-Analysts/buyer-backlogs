@@ -23,8 +23,6 @@ source("./time_machine-graphs.r")
 ```
 # Buyer Backlog Report of `r data_date`
 
-### All Reqs
-
 ```{r echo=FALSE, warning=FALSE, fig.align='center', out.width="100%", out.height="450px"}
 backlog_plot_ninv <- backlog_plot %>% 
   filter(Category == "NINV") %>% 
@@ -33,8 +31,8 @@ backlog_plot_ninv <- backlog_plot %>%
           x = ~Count,
           color = ~Type,
           type = "bar", 
-          colors = c("#99D594","#FFFFBF","#FC8D59"),
-          width = "18px",
+          colors = c("#00EE00","#EEEE00","#EE0000"),
+          width = "16px",
           legendgroup = ~Type) %>% 
   layout(yaxis = list(autorange = "reversed", fixedrange = TRUE), 
          xaxis = list(fixedrange = TRUE), 
@@ -47,9 +45,9 @@ backlog_plot_se <- backlog_plot %>%
           x = ~Count,
           color = ~Type,
           type = "bar", 
-          colors = c("#99D594","#FFFFBF","#FC8D59"),
+          colors = c("#00EE00","#EEEE00","#EE0000"),
           legendgroup = ~Type, 
-          width = "18px",
+          width = "16px",
           showlegend = F) %>% 
   layout(yaxis = list(autorange = "reversed", fixedrange = TRUE), 
          xaxis = list(fixedrange = TRUE), 
@@ -62,9 +60,9 @@ backlog_plot_inv <- backlog_plot %>%
           x = ~Count,
           color = ~Type,
           type = "bar", 
-          colors = c("#99D594","#FFFFBF","#FC8D59"),
+          colors = c("#00EE00","#EEEE00","#EE0000"),
           legendgroup = ~Type, 
-          width = "18px",
+          width = "16px",
           showlegend = F) %>% 
   layout(yaxis = list(autorange = "reversed", fixedrange = TRUE), 
          xaxis = list(fixedrange = TRUE), 
@@ -72,14 +70,14 @@ backlog_plot_inv <- backlog_plot %>%
 
 # subplots are ggplot equivalent of facets
 subplot(backlog_plot_ninv, backlog_plot_se, backlog_plot_inv, nrows = 3, margin = .03, shareX = TRUE) %>% 
-  config(displayModeBar = FALSE)
+  config(displayModeBar = FALSE) %>% 
+  layout(title = "All Reqs")
 
 ```
 *Omitted buyer(s) with no backlogs: `r paste(hidden_buyers)`.*
 
-### Reqs Over 90 Days 
 
-```{r echo=FALSE, out.width="100%", out.height="375px"}
+```{r echo=FALSE, out.width="100%", out.height="425px"}
 
 backlog_plot_90dayplus_ninv <- backlog_plot_90dayplus %>% 
   filter(Category == "NINV") %>% 
@@ -88,8 +86,8 @@ backlog_plot_90dayplus_ninv <- backlog_plot_90dayplus %>%
           x = ~Count,
           color = ~Type,
           type = "bar", 
-          colors = c("#99D594","#FFFFBF","#FC8D59"),
-          width = "18px",
+          colors = c("#00EE00","#EEEE00","#EE0000"),
+          width = "16px",
           legendgroup = ~Type) %>% 
   layout(yaxis = list(autorange = "reversed", fixedrange = TRUE), 
          xaxis = list(fixedrange = TRUE), 
@@ -102,8 +100,8 @@ backlog_plot_90dayplus_se <- backlog_plot_90dayplus %>%
           x = ~Count,
           color = ~Type,
           type = "bar", 
-          colors = c("#99D594","#FFFFBF","#FC8D59"),
-          width = "18px",
+          colors = c("#00EE00","#EEEE00","#EE0000"),
+          width = "16px",
           legendgroup = ~Type,
           showlegend = F) %>% 
   layout(yaxis = list(autorange = "reversed", fixedrange = TRUE), 
@@ -117,17 +115,18 @@ backlog_plot_90dayplus_inv <- backlog_plot_90dayplus %>%
           x = ~Count,
           color = ~Type,
           type = "bar", 
-          colors = c("#99D594","#FFFFBF","#FC8D59"),
-          width = "18px",
+          colors = c("#00EE00","#EEEE00","#EE0000"),
+          width = "16px",
           legendgroup = ~Type,
           showlegend = F) %>% 
   layout(yaxis = list(autorange = "reversed", fixedrange = TRUE), 
          xaxis = list(fixedrange = TRUE), 
-         barmode = 'stack')
+         barmode = 'stack') 
 
 
 subplot(backlog_plot_90dayplus_ninv, backlog_plot_90dayplus_se, backlog_plot_90dayplus_inv, nrows = 3, margin = .03, shareX = TRUE) %>% 
-  config(displayModeBar = FALSE)
+  config(displayModeBar = FALSE) %>% 
+  layout(title = "Reqs Over 90 Days")
 
 ```
 
