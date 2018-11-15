@@ -221,7 +221,7 @@ backlog_plain_timemachine_se_plot <- backlog_plain_timemachine %>%
   add_lines(x = ~Archive_Time, y = ~Cnt, name = "SE") %>% 
   layout(xaxis = list(title = "Date", fixedrange = TRUE), yaxis = list(title = "Count", fixedrange = TRUE))
 
-subplot(backlog_plain_timemachine_inv_plot, backlog_plain_timemachine_ninv_plot, backlog_plain_timemachine_se_plot, nrows = 3) %>% 
+subplot(backlog_plain_timemachine_inv_plot, backlog_plain_timemachine_ninv_plot, backlog_plain_timemachine_se_plot, nrows = 3, margin = .03) %>% 
   config(displayModeBar = FALSE)
 ```
 
@@ -248,7 +248,7 @@ backlog_timemachine_90dayplus_sum_se_plot <- backlog_timemachine_90dayplus_sum %
 
 subplot(backlog_timemachine_90dayplus_sum_inv_plot, 
         backlog_timemachine_90dayplus_sum_ninv_plot, 
-        backlog_timemachine_90dayplus_sum_se_plot, nrows = 3) %>% 
+        backlog_timemachine_90dayplus_sum_se_plot, nrows = 3, margin = .03) %>% 
   config(displayModeBar = FALSE)
   
 ```
