@@ -97,24 +97,8 @@ backlog_timemachine_90dayplus_sum <-
     backlog_out_to_bid_timemachine_90dayplus_sum) %>% 
   replace_na(list(holdCnt = 0)) %>% 
   mutate(Cnt = plainCnt + holdCnt + out_to_bidCnt)
-# Buyer Backlog Over 90 Days ----------------------------------------------
 
 
+# Weekly Performance Report -----------------------------------------------
 
-# A tibble: 2 x 3
-# Groups:   50K+ [?]
-#`50K+` Archive_Time   Cnt
-#<lgl>  <date>       <int>
-#  1 FALSE  2018-10-11       1
-#2 TRUE   2018-10-11      13
 
-#`50K+` Archive_Time          Cnt
-#<lgl>  <dttm>              <int>
-#  1 FALSE  2018-10-11 16:47:17     1
-#2 FALSE  2018-10-12 17:47:11     3
-#3 FALSE  2018-10-15 19:45:15     6
-#4 FALSE  2018-10-16 16:27:57     5
-#5 TRUE   2018-10-11 16:47:17    13
-#6 TRUE   2018-10-12 17:47:11    11
-#7 TRUE   2018-10-15 19:45:15    12
-#8 TRUE   2018-10-16 16:27:57    12
