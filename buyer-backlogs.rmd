@@ -1,5 +1,7 @@
 ---
-output: html_document
+output: 
+  html_document:
+    self_contained: false
 ---
 
 ```{r include=FALSE, warning=FALSE}
@@ -201,7 +203,7 @@ plot_ly(data = approval_worklist_timemachine) %>%
 
 ### All Actionable Backlog Reqs
 
-```{r echo=FALSE, warning=FALSE, out.width="100%", out.height="400px", eval = use_time_machine}
+```{r echo=FALSE, warning=FALSE, out.width="100%", out.height="500px", eval = use_time_machine}
 backlog_plain_timemachine_inv_plot <- backlog_plain_timemachine %>% 
   filter(Category == "INV") %>% 
   plot_ly() %>% 
@@ -221,13 +223,13 @@ backlog_plain_timemachine_se_plot <- backlog_plain_timemachine %>%
   add_lines(x = ~Archive_Time, y = ~Cnt, name = "SE") %>% 
   layout(xaxis = list(title = "Date", fixedrange = TRUE), yaxis = list(title = "Count", fixedrange = TRUE))
 
-subplot(backlog_plain_timemachine_inv_plot, backlog_plain_timemachine_ninv_plot, backlog_plain_timemachine_se_plot) %>% 
+subplot(backlog_plain_timemachine_inv_plot, backlog_plain_timemachine_ninv_plot, backlog_plain_timemachine_se_plot, nrows = 3, margin = .03) %>% 
   config(displayModeBar = FALSE)
 ```
 
 ### Req Older than 90 Days Trend
 
-```{r echo=FALSE, warning=FALSE, out.width="100%", out.height="400px", eval = use_time_machine}
+```{r echo=FALSE, warning=FALSE, out.width="100%", out.height="500px", eval = use_time_machine}
 backlog_timemachine_90dayplus_sum_inv_plot <- backlog_timemachine_90dayplus_sum %>% 
   filter(Category == "INV") %>% 
   plot_ly() %>% 
@@ -248,7 +250,7 @@ backlog_timemachine_90dayplus_sum_se_plot <- backlog_timemachine_90dayplus_sum %
 
 subplot(backlog_timemachine_90dayplus_sum_inv_plot, 
         backlog_timemachine_90dayplus_sum_ninv_plot, 
-        backlog_timemachine_90dayplus_sum_se_plot) %>% 
+        backlog_timemachine_90dayplus_sum_se_plot, nrows = 3, margin = .03) %>% 
   config(displayModeBar = FALSE)
   
 ```
