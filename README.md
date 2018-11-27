@@ -37,11 +37,11 @@ The product of this project, `buyer-backlogs.html` resides with Project Chromebo
 
 ### Data Requirements
 
-This project takes 2 excel files:
+This project takes 2 excel files as input:
 
 #### `BACKLOG-mmddyyyy-hhmmss.xlsx`
 
-This excel should contain the following columns:
+This excel file should contain the following columns:
 
 | Columns                      | Use                                       |
 | ---------------------------- | ----------------------------------------- |
@@ -63,7 +63,7 @@ This excel should contain the following columns:
 
 #### `APPROVER-BACKLOG-mmddyyyy-hhmmss.xlsx`
 
-This excel should contain the following fields:
+This excel file should contain the following fields:
 
 | Columns   | Use                                                                |
 | --------- | ------------------------------------------------------------------ |
