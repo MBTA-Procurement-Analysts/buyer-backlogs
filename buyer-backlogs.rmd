@@ -5,22 +5,49 @@ output:
 ---
 
 ```{r include=FALSE, warning=FALSE}
-print("Buyer Backlog R Scipt")
+# Note: The following sourcing scripts are separated to allow easier debugging.
+# It is ugly, but it's more useful than "Error between Line 8 to 15".
 library(lubridate)
+
+# For automatic data pipe
 source("./data_import.r")
+
+# For manual imports, remember to comment-out the other.
+# source("./data_import_manual.r")
+```
+
+```{r include=FALSE, warning=FALSE}
 source("./buyer-backlogs.r")
+```
+
+```{r include=FALSE, warning=FALSE}
 source("./buyer-backlogs-90dayplus.r")
+```
+
+```{r include=FALSE, warning=FALSE}
 source("./buyer-backlogs-amounts.r")
+```
+
+```{r include=FALSE, warning=FALSE}
 source("./approver-backlogs.r")
+```
 
-# Switch for whether Time Machine graphs should be displayed. Since Titles
-#   for those sections are rendered independently the switch below is for
-#   debug purposes only. ...and it should belong to somewhere else.
+```{r include=FALSE, warning=FALSE}
+# Switch for whether thetime machine section (historical trends) is used
+#   and rendered. Controls read/write to mongodb as well as rendering of
+#   the graphs.
+# The titles for the timemachine sections will still be included (since
+#   they are not R code), thus this is largly a debug option. 
 use_time_machine = TRUE
+```
 
+```{r include=FALSE, warning=FALSE, eval=use_time_machine}
 # NOTE: The following file writes to the specified mongodb, comment out
 #         the line while debugging to avoid accidental writes
 source("./time_machine-mongo.r")
+```
+
+```{r include=FALSE, warning=FALSE, eval=use_time_machine}
 source("./time_machine-graphs.r")
 ```
 # Buyer Backlog Report of `r data_date`

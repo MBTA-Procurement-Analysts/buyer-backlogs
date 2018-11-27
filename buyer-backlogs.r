@@ -39,7 +39,7 @@ date_now <- today()
 # FROM date of the filtering
 date_from <- ymd("2000-01-01")
 
-# TO date of the filtering
+# TO date of the filtering, end of current FY
 date_to <- ymd("2019-06-30")
 
 # (Util) Function Definitions ---------------------------------------------
@@ -225,7 +225,7 @@ backlog_plot <- full_join(full_join(backlog_out_to_bid_plot, backlog_not_out_to_
   mutate_at("Buyer", substr, start = 0, stop = 2)
 
 
-# Omitted Buyer Display for the Bay Graph ---------------------------------
+# Omitted Buyer Display for the Bar Graph ---------------------------------
 
 active_buyers <- backlog_all_table %>% ungroup(Buyer) %>% select(Buyer)
 all_buyers <- buyers_cat %>% select(Buyer)

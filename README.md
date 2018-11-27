@@ -65,19 +65,19 @@ This excel should contain the following columns:
 
 This excel should contain the following fields:
 
-| Columns   | Use                                                     |
-| --------- | ------------------------------------------------------- |
-| User      | Not used                                                |
-| Status    | Not used                                                |
-| OperID    | Not used                                                |
-| Date/Time | Date/Time of the worklist entry                         |
-| Unit      | Not used                                                |
-| PO No.    | Unique Identifier, to poll rubix PO apis                |
-| Origin    | Not used                                                |
-| Merch_Amt | Dollar amount of Line item                              |
-| Line      | Line Identifier, used to dedupe and summarize PO amount |
+| Columns   | Use                                                                |
+| --------- | ------------------------------------------------------------------ |
+| User      | Not used                                                           |
+| Status    | Not used                                                           |
+| OperID    | Not used                                                           |
+| Date/Time | Date/Time of the worklist entry                                    |
+| Unit      | Not used                                                           |
+| PO No.    | Unique Identifier, to poll rubix PO apis                           |
+| Origin    | Not used                                                           |
+| Merch_Amt | Dollar amount of Line item                                         |
+| Line      | Line Identifier, used to remove duplicates and summarize PO amount |
 
-For the data pipe, `data_import.r` is used to specify the path, date and code version upon runtime. For local development or debugging, `data_import_manual.r` is used. See the `Project Structure / Call Flow` sction for more information. 
+For the data pipe, `data_import.r` is used to specify the path, date and code version upon runtime. For local development or debugging, `data_import_manual.r` is used. See the `Project Structure / Call Flow` section for more information. 
 
 ## Project Structure / Call Flow
 
@@ -106,8 +106,66 @@ The roles of the files are as follows:
 
 ### Intermediate Files
 
+These intermediate `json` files are created for loading historical data from rubix mongodb into the current run. These files are not in this repo and they are overwritten during every run.
+
+| File Name | Corresponding mongodb Path | Use |
+| --------- | -------------------------- | --- |
+| `approval_worklist_timemachine.json` | `test/timemachine_pp_worklist` | Stores historical approver data |
+| `timemachine_backlog_hold.json` | `test/timemachine_backlog_hold` | Stores historical on-hold backlog REQ data |
+| `timemachine_backlog_out_to_bid.json` |  `test/timemachine_out_to_bid` | Stores historical out-to-bid backlog REQ data |
+| `timemachine_backlog_plain.json` | `test/timemachine_plain` | Stores historical regular backlog REQ data |
+
+
 ### Output File(s)
 
-## Troubleshoot
+This project will export `buyer-backlogs.html` to the directory specified in `main.r`. It will also create a directory called `buyer-backlogs_files/` for all of its dependencies.
 
-## Next Steps
+### Call Flow
+
+If using an data pipe:
+
+1. `data_run.sh` is called from another machine using ssh, with a parameter of date in `mmddyyyy-hhmmss`. This shell script then constructs the `data_import.r` file so the filename for the query (excel) files would match. It then calls `R` to execute `main.r`.
+
+If importing the input files manually:
+
+1. Modify `data_import_manual.r` to set the path for the two import files, as well as the date of the data. (Code version does not matter).
+2. Modify `buyer-backlogs.rmd` to use the line `source("./data_import_manual.r")` (around Line 16).
+3. Run `R -f main.r` from the command line. Change the output path of the html file in `main.r` if needed.
+
+Then, the code does the following:
+
+1. `main.r` imports and calls `rmarkdown` to render the `buyer-backlogs.rmd` rmarkdown file.
+2. In `buyer-backlogs.rmd`, the `data_import*.r` is sourced. The path of the input files are now available as string variables.
+3. Consequent code files are sourced, using the file path variables.
+4. The output `buyer-backlogs.html` is exported to the path specified in `main.r`.
+
+## Troubleshooting
+
+### Common Errors
+
+With the automatic data pipe, mail sent after each `cron` job can be very useful for debugging. This section lists some common errors found in the logs. Consult the data pipe manual for common errors found in other parts of the pipe.
+
+#### Path Does not Exist
+
+```
+Quitting from lines 6-18 (buyer-backlogs.rmd)
+Error: `path` does not exist: '/SOME-PATH/10242018-144501/BACKLOG-10242018-144501.xlsx'
+
+Execution halted
+```
+
+It is highly likely that this issue is external to this project.
+
+If the path in the error log does not have a date string (e.g., `10242018-144501`), check the upstream bash script responsible for uploading the files. If not, it is likely that the upstream program failed to download the files (DB maintenance, etc).
+
+#### Object 'mongo_...' not Found
+
+```
+Quitting from lines 6-18 (buyer-backlogs.rmd)
+Error in eval(ei, envir) : object 'mongo_approval_worklist' not found
+Calls: <Anonymous> ... eval -> eval -> source -> withVisible -> eval -> eval
+
+Execution halted
+```
+
+There is likely a conflict between the `use_time_machine` boolean and the sourcing of `time_machine-*.r`. It has been fixed as of 11/27/2018.
