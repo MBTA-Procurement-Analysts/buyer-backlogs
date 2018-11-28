@@ -10,9 +10,11 @@ output:
 library(lubridate)
 
 # For automatic data pipe
+
 source("./data_import.r")
 
 # For manual imports, remember to comment-out the other.
+
 # source("./data_import_manual.r")
 ```
 
@@ -224,10 +226,13 @@ kable(backlog_amount_kable) %>%
 ## PP's Worklist Trend
 ```{r echo=FALSE, warning=FALSE, out.width="100%", out.height="400px", eval = use_time_machine}
 plot_ly(data = approval_worklist_timemachine) %>% 
-  add_lines(x = ~Archive_Time, y = ~Cnt, name = "PP's List (> $50K)") %>% 
-  layout(xaxis = list(title = "Date", fixedrange = TRUE), yaxis = list(title = "Count", fixedrange = TRUE)) %>% 
+  add_lines(x = ~Archive_Time, 
+            y = ~Cnt, 
+            name = "PP's List (> $50K)") %>% 
+  # No controls around the plot, to be mobile friendly
+  layout(xaxis = list(title = "Date", fixedrange = TRUE), 
+         yaxis = list(title = "Count", fixedrange = TRUE)) %>% 
   config(displayModeBar = FALSE)
-
 ```
 
 ## Buyers Backlog Trend
@@ -241,7 +246,6 @@ backlog_plain_timemachine_inv_plot <- backlog_plain_timemachine %>%
   add_lines(x = ~Archive_Time, y = ~Cnt, name = "INV") %>% 
   layout(xaxis = list(title = "Date", fixedrange = TRUE), yaxis = list(title = "Count", fixedrange = TRUE))
 
-
 backlog_plain_timemachine_ninv_plot <- backlog_plain_timemachine %>% 
   filter(Category == "NINV") %>% 
   plot_ly() %>% 
@@ -254,7 +258,11 @@ backlog_plain_timemachine_se_plot <- backlog_plain_timemachine %>%
   add_lines(x = ~Archive_Time, y = ~Cnt, name = "SE") %>% 
   layout(xaxis = list(title = "Date", fixedrange = TRUE), yaxis = list(title = "Count", fixedrange = TRUE))
 
-subplot(backlog_plain_timemachine_inv_plot, backlog_plain_timemachine_ninv_plot, backlog_plain_timemachine_se_plot, nrows = 3, margin = .03) %>% 
+subplot(backlog_plain_timemachine_inv_plot, 
+        backlog_plain_timemachine_ninv_plot, 
+        backlog_plain_timemachine_se_plot, 
+        nrows = 3, 
+        margin = .03) %>% 
   config(displayModeBar = FALSE)
 ```
 
@@ -281,7 +289,9 @@ backlog_timemachine_90dayplus_sum_se_plot <- backlog_timemachine_90dayplus_sum %
 
 subplot(backlog_timemachine_90dayplus_sum_inv_plot, 
         backlog_timemachine_90dayplus_sum_ninv_plot, 
-        backlog_timemachine_90dayplus_sum_se_plot, nrows = 3, margin = .03) %>% 
+        backlog_timemachine_90dayplus_sum_se_plot, 
+        nrows = 3, 
+        margin = .03) %>% 
   config(displayModeBar = FALSE)
   
 ```

@@ -5,7 +5,6 @@
 # NOTE: This file is a part of "buyer-backlogs.rmd" report, and it depends
 #         on the dependencies of the report.
 
-
 # Init, Library Imports ---------------------------------------------------
 
 library(mongolite)
@@ -16,7 +15,7 @@ db_url <- if (Sys.info()[[1]] == "Linux") {"mongodb://127.0.0.1:27017"} else {"m
 
 # Approver Backlog Graphs -------------------------------------------------
 
-# Re-using connections, see notes around L54 in this file. 
+# Re-using connections, see notes around L41 in this file. 
 # mongo_approval_worklist <- mongo(collection = "timemachine_pp_worklist", db = "test", url = db_url)
 
 # Export to temp file
@@ -25,17 +24,17 @@ mongo_approval_worklist$export(file("approval_worklist_timemachine.json"))
 # Read temp file as Dataframe
 approval_worklist_timemachine_json <- stream_in(file("approval_worklist_timemachine.json"))
 
-# Slice mongodb id off and tibble conversion, otherwise as_tibble won't work 
+# Slice mongodb id off and tibble conversion, since ObjectID is of a type 
+#   as_tibble can't handle
 approval_worklist_timemachine <- as_tibble(approval_worklist_timemachine_json[2:11])
 
 # New Function of Wrangling Approver Backlog:
-# This function simply filters non-PP (<$50k) entries, per discussion of the total amount of backlogs
-#   being no longer necessary.
+# This function simply filters non-PP (<$50k) entries, per discussion of the 
+#   total amount of backlogs being no longer necessary.
 approval_worklist_timemachine <- approval_worklist_timemachine %>% 
   filter(Sum_of_PO_Amt >= 50000) %>% 
   group_by(Archive_Time) %>% 
   summarize(Cnt = n()) 
-
 
 # Buyers Backlog Graphs ---------------------------------------------------
 
@@ -59,7 +58,7 @@ backlog_plain_timemachine_raw <- as_tibble(backlog_plain_timemachine_json[2:16])
 backlog_hold_timemachine_raw <- as_tibble(backlog_hold_timemachine_json[2:16])
 backlog_out_to_bid_timemachine_raw <- as_tibble(backlog_out_to_bid_timemachine_json[2:16])
 
-# DF/Tibble , bool -> Tibble
+# DF/Tibble, bool -> Tibble
 # Summarizes Data for Buyer Backlog Timemachine Trend Graphs
 # Copying code to 6 different places is hard, so...
 summarize.time.machine.hard <- function(data, is90dayPlus) {
@@ -98,7 +97,4 @@ backlog_timemachine_90dayplus_sum <-
   replace_na(list(holdCnt = 0)) %>% 
   mutate(Cnt = plainCnt + holdCnt + out_to_bidCnt)
 
-
 # Weekly Performance Report -----------------------------------------------
-
-
