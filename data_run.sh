@@ -20,6 +20,3 @@ version=$(git rev-list --count ohio)
 echo "code_version <- $version" >> ./data_import.r
 
 R -f ./main.r
-
-exit 0
-

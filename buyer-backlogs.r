@@ -14,11 +14,11 @@
 library(tidyverse)
 library(kableExtra)
 library(readxl)
-library(knitr)
 library(plotly)
 library(scales)
 library(RColorBrewer)
 
+# Raw backlog data
 backlog_raw <- readxl::read_excel(backlog_data_path, skip = 1)
 
 # Constant Definitions ----------------------------------------------------
@@ -39,7 +39,7 @@ date_now <- today()
 # FROM date of the filtering
 date_from <- ymd("2000-01-01")
 
-# TO date of the filtering
+# TO date of the filtering, end of current FY
 date_to <- ymd("2019-06-30")
 
 # (Util) Function Definitions ---------------------------------------------
@@ -66,7 +66,7 @@ na.rm.at <- function(data, colName) {
 
 # Data Wrangling ----------------------------------------------------------
 
-# Add "days ago" field, buyer category, and filters out any buyers that is
+# Add "Age" (days ago) field, buyer category, and filters out any buyers that is
 #   not in the buyers_cat table above. Also removed NA buyers.
 backlog_raw <- backlog_raw %>%
   mutate(Age = date_now - date(`Date of Approval`)) %>%
@@ -111,7 +111,9 @@ amount.binning.hard <- function(data) {
 # DF/Tibble -> Tibble; Sums bins and spread them into columns. Does not
 #   remove NAs since we will do that later anyways.
 # NOTE: If a bin is not present in the data, the corresponding column will NOT
-#         be created. Function 'validate.~.bins.hard()' is designed to patch this.
+#         be created and the downstream 'select' and 'rename' functions will
+#         throw errors. 
+# Function 'validate.~.bins.hard()' is designed to patch this.
 bin.counts.hard <- function(data) {
   data %>%
     group_by(Buyer, Bins) %>%
@@ -204,7 +206,7 @@ backlog_age_kable_col_count <- backlog_kable_source %>%
 
 # Buyer Stacked Bar Graph -------------------------------------------------
 
-# Buyers and their out-to-bit count
+# Buyers and their out-to-bid count
 backlog_out_to_bid_plot <- backlog_raw %>% filter(`Out-to-Bid` == "Requested") %>% group_by(Buyer) %>% summarize(OtBCnt = n ())
 
 # Buyers and their regular backlog count
@@ -225,7 +227,7 @@ backlog_plot <- full_join(full_join(backlog_out_to_bid_plot, backlog_not_out_to_
   mutate_at("Buyer", substr, start = 0, stop = 2)
 
 
-# Omitted Buyer Display for the Bay Graph ---------------------------------
+# Omitted Buyer Display for the Bar Graph ---------------------------------
 
 active_buyers <- backlog_all_table %>% ungroup(Buyer) %>% select(Buyer)
 all_buyers <- buyers_cat %>% select(Buyer)
