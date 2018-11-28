@@ -149,7 +149,7 @@ backlog_plot_90dayplus_inv <- backlog_plot_90dayplus %>%
           type = "bar", 
           colors = c("#00EE00","#EEEE00","#EE0000"),
           width = "16px",
-          legendgroup = ~Type
+          legendgroup = ~Type,
           showlegend = F) %>% 
   layout(yaxis = list(autorange = "reversed", fixedrange = TRUE), 
          xaxis = list(fixedrange = TRUE), 
