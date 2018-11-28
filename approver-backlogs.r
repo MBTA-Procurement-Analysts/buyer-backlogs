@@ -88,6 +88,8 @@ approver_cnt_bins <- approval_raw %>%
   approver.age.binning.hard() %>% 
   approver.bin.counts.hard() %>%
   validate.approver.cnt.bins.hard() %>%
+  # re-arrange data since the func above will mess with order when triggered
+  select(`0`, `7`, `14`, `30`) %>%
   rename(`0 to 7` = `0`, `7 to 14` = `7`, `14 to 30` = `14`, `30+` = `30`)
 
 # Applies Age binning to approver backlogs
@@ -95,6 +97,7 @@ approver_amt_bins <- approval_raw %>%
   approver.amount.binning.hard() %>% 
   approver.bin.counts.hard() %>% 
   validate.approver.amt.bins.hard() %>%
+  # re-arrange data since the func above will mess with order when triggered
   select(`0`, `50000`, `250000`, `5e+05`) %>%
   rename(`< $50k` = `0`, `$50k to $250k` = `50000`, `$250k to $500k` = `250000`, `$500k+` = `5e+05`)
 
