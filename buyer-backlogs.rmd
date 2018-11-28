@@ -5,27 +5,58 @@ output:
 ---
 
 ```{r include=FALSE, warning=FALSE}
-print("Buyer Backlog R Scipt")
+# Note: The following sourcing scripts are separated to allow easier debugging.
+# It is ugly, but it's more useful than "Error between Line 8 to 15".
 library(lubridate)
+
+# For automatic data pipe
+
 source("./data_import.r")
+
+# For manual imports, remember to comment-out the other.
+
+# source("./data_import_manual.r")
+```
+
+```{r include=FALSE, warning=FALSE}
 source("./buyer-backlogs.r")
+```
+
+```{r include=FALSE, warning=FALSE}
 source("./buyer-backlogs-90dayplus.r")
+```
+
+```{r include=FALSE, warning=FALSE}
 source("./buyer-backlogs-amounts.r")
+```
+
+```{r include=FALSE, warning=FALSE}
 source("./approver-backlogs.r")
+```
 
-# Switch for whether Time Machine graphs should be displayed. Since Titles
-#   for those sections are rendered independently the switch below is for
-#   debug purposes only. ...and it should belong to somewhere else.
+```{r include=FALSE, warning=FALSE}
+# Switch for whether thetime machine section (historical trends) is used
+#   and rendered. Controls read/write to mongodb as well as rendering of
+#   the graphs.
+# The titles for the timemachine sections will still be included (since
+#   they are not R code), thus this is largly a debug option. 
 use_time_machine = TRUE
+```
 
+```{r include=FALSE, warning=FALSE, eval=use_time_machine}
 # NOTE: The following file writes to the specified mongodb, comment out
 #         the line while debugging to avoid accidental writes
 source("./time_machine-mongo.r")
+```
+
+```{r include=FALSE, warning=FALSE, eval=use_time_machine}
 source("./time_machine-graphs.r")
 ```
 # Buyer Backlog Report of `r data_date`
 
 ```{r echo=FALSE, warning=FALSE, fig.align='center', out.width="100%", out.height="450px"}
+# All backlog Reqs, by buyer category, then y-axis by buyer and color by Req Type.
+# 'fixedrange' to force the axis to be non-modifiable
 backlog_plot_ninv <- backlog_plot %>% 
   filter(Category == "NINV") %>% 
   plot_ly() %>% 
@@ -72,15 +103,14 @@ backlog_plot_inv <- backlog_plot %>%
 
 # subplots are ggplot equivalent of facets
 subplot(backlog_plot_ninv, backlog_plot_se, backlog_plot_inv, nrows = 3, margin = .03, shareX = TRUE) %>% 
+  # No controls around the plot, to be mobile friendly
   config(displayModeBar = FALSE) %>% 
   layout(title = "All Reqs")
-
 ```
 *Omitted buyer(s) with no backlogs: `r paste(hidden_buyers)`.*
 
 
 ```{r echo=FALSE, out.width="100%", out.height="425px"}
-
 backlog_plot_90dayplus_ninv <- backlog_plot_90dayplus %>% 
   filter(Category == "NINV") %>% 
   plot_ly() %>% 
@@ -129,12 +159,16 @@ backlog_plot_90dayplus_inv <- backlog_plot_90dayplus %>%
 subplot(backlog_plot_90dayplus_ninv, backlog_plot_90dayplus_se, backlog_plot_90dayplus_inv, nrows = 3, margin = .03, shareX = TRUE) %>% 
   config(displayModeBar = FALSE) %>% 
   layout(title = "Reqs Over 90 Days")
-
 ```
 
 ## PP's Approval Worklist
 
 ```{r echo=FALSE}
+# Approver's backlog overview
+# Grouping By Age: 0 to 7, 7 to 14, 14 to 30, 30+
+# Grouping By Dollar Amount: <$50k, $50k to $250k, $250k to $500k, $500k+
+# Total # of backlog entries
+# Since the bins rarely change, the group header is added by hard-coding the # of columns.
 kable(approval_kable) %>% 
   kable_styling() %>% 
   add_header_above(c("Grouping By Age (Days)" = 4, "Grouping By Dollar Amount" = 4, " " = 1)) %>% 
@@ -147,7 +181,6 @@ kable(approval_kable) %>%
 ### PP's Worklist Details (`r approval_detail_count`)
 
 *Omitted `r (approval_total_count - approval_detail_count)` entries less than $50,000.*
-
 
 ```{r echo=FALSE}
 kable(approval_detail_table)%>% 
@@ -193,10 +226,13 @@ kable(backlog_amount_kable) %>%
 ## PP's Worklist Trend
 ```{r echo=FALSE, warning=FALSE, out.width="100%", out.height="400px", eval = use_time_machine}
 plot_ly(data = approval_worklist_timemachine) %>% 
-  add_lines(x = ~Archive_Time, y = ~Cnt, name = "PP's List (> $50K)") %>% 
-  layout(xaxis = list(title = "Date", fixedrange = TRUE), yaxis = list(title = "Count", fixedrange = TRUE)) %>% 
+  add_lines(x = ~Archive_Time, 
+            y = ~Cnt, 
+            name = "PP's List (> $50K)") %>% 
+  # No controls around the plot, to be mobile friendly
+  layout(xaxis = list(title = "Date", fixedrange = TRUE), 
+         yaxis = list(title = "Count", fixedrange = TRUE)) %>% 
   config(displayModeBar = FALSE)
-
 ```
 
 ## Buyers Backlog Trend
@@ -210,7 +246,6 @@ backlog_plain_timemachine_inv_plot <- backlog_plain_timemachine %>%
   add_lines(x = ~Archive_Time, y = ~Cnt, name = "INV") %>% 
   layout(xaxis = list(title = "Date", fixedrange = TRUE), yaxis = list(title = "Count", fixedrange = TRUE))
 
-
 backlog_plain_timemachine_ninv_plot <- backlog_plain_timemachine %>% 
   filter(Category == "NINV") %>% 
   plot_ly() %>% 
@@ -223,7 +258,11 @@ backlog_plain_timemachine_se_plot <- backlog_plain_timemachine %>%
   add_lines(x = ~Archive_Time, y = ~Cnt, name = "SE") %>% 
   layout(xaxis = list(title = "Date", fixedrange = TRUE), yaxis = list(title = "Count", fixedrange = TRUE))
 
-subplot(backlog_plain_timemachine_inv_plot, backlog_plain_timemachine_ninv_plot, backlog_plain_timemachine_se_plot, nrows = 3, margin = .03) %>% 
+subplot(backlog_plain_timemachine_inv_plot, 
+        backlog_plain_timemachine_ninv_plot, 
+        backlog_plain_timemachine_se_plot, 
+        nrows = 3, 
+        margin = .03) %>% 
   config(displayModeBar = FALSE)
 ```
 
@@ -250,7 +289,9 @@ backlog_timemachine_90dayplus_sum_se_plot <- backlog_timemachine_90dayplus_sum %
 
 subplot(backlog_timemachine_90dayplus_sum_inv_plot, 
         backlog_timemachine_90dayplus_sum_ninv_plot, 
-        backlog_timemachine_90dayplus_sum_se_plot, nrows = 3, margin = .03) %>% 
+        backlog_timemachine_90dayplus_sum_se_plot, 
+        nrows = 3, 
+        margin = .03) %>% 
   config(displayModeBar = FALSE)
   
 ```
