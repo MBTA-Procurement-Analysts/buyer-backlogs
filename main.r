@@ -1,2 +1,2 @@
 library(rmarkdown)
-rmarkdown::render("buyer-backlogs.rmd", output_dir = '~/public/Project-Chromebook/public/')
+rmarkdown::render("buyer-backlogs.rmd", output_dir = '~/public/PLIT/public/')
