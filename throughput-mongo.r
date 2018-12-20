@@ -71,7 +71,7 @@ buyer.category.buyer.names <- function(data) {
 mongo_po_tibble <- mongo_po_tibble %>% 
   mutate_at("PO_Date", date) %>% 
   mutate(`WeekNo` = date.of.week(`PO_Date`)) %>% 
-  mutate_at("WeekNo", ~paste(month(.), day(.), sep = "/"))
+  mutate_at("WeekNo", ~format(., "%m/%d"))
 
 # PO Count by Buyer and by Week, ignores "IGNORE" buyers
 throughput_hdr_tibble <- mongo_po_tibble %>% 
