@@ -1,0 +1,36 @@
+---
+output:
+  html_document:
+    self_contained: false
+---
+
+```{r include=FALSE, warning=FALSE}
+source("./throughput-mongo.r")
+```
+
+# Throughput Report of `r data_date`
+
+## PO Count
+
+```{r echo=FALSE}
+# This vector holds the number of buyers in each category for this kable,
+#   in "INV, NINV, SE" order."
+throughput_row_num_vec <- as_vector(throughput_cat_cnt_tibble[[2]])
+kable(throughput_hdr_tibble) %>% 
+  kable_styling() %>% 
+  group_rows(index = c("Inventory" = throughput_row_num_vec[1],
+                       "Non-Inventory" = throughput_row_num_vec[2],
+                       "Sourcing Exec." = throughput_row_num_vec[3]))
+```
+
+## PO Line Count
+
+```{r echo=FALSE}
+kable(throughput_lines_tibble) %>% 
+  kable_styling() %>% 
+  group_rows(index = c("Inventory" = throughput_row_num_vec[1],
+                       "Non-Inventory" = throughput_row_num_vec[2],
+                       "Sourcing Exec." = throughput_row_num_vec[3]))
+```
+
+*Counting Approved, Completed, and Dispatched POs*

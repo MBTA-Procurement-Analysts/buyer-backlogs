@@ -27,10 +27,12 @@ backlog_raw <- readxl::read_excel(backlog_data_path, skip = 1)
 source("buyer-group-definition.r")
 
 # Buyer Category Factors, for ordering
+# Note that this factor does not include the "IGNORE" category, and thus 
+#   they should be filtered out before factorizing the Category field.
 buyer_cat_fct <- c("NINV", "SE", "INV")
 
 # Tibble of Buyers and their Categories
-buyers_cat<- bind_rows(sourcing_execs, inventory_buyers, non_inventory_buyers)
+buyers_cat<- bind_rows(sourcing_execs, inventory_buyers, non_inventory_buyers, ignore_buyers)
 
 # Date to be used as Today. Use the dynamic definition unless otherwise needed.
 date_now <- today()
