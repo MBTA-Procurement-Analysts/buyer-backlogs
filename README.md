@@ -1,14 +1,16 @@
 # Buyers Backlog Visualization
 
-Version `6x`, as of November 21, 2018
+As of version `82/83`, Dec 21, 2018. 
 
 ## Purpose
 
 To visualize the backlog data for each buyer, in terms of age (amount of days passed since approval) and amount. This project also includes backlog info of the approver, as well as historical trend of mentioned metrics. 
 
-This project is designed to be a component of the data pipe, and is triggered every Monday to Friday 6am and 2pm. See documentation of the data pipe for more information. 
+Out of convenience, this project also hosts the buyer throughput dashboard, which shows the PO and PO Line count per user.
 
-The product of this project, `buyer-backlogs.html` resides with Project Chromebook, as it is being accessed by end-users through the internet. 
+This project is designed to be a component of the data pipe, and is triggered every Monday to Friday, twice every day. See documentation of the data pipe for more information. 
+
+The product of this project, `buyer-backlogs.html` and `buyer-throughput.html` resides with PLIT, as it is being accessed by end-users through the internet. 
 
 ## Install/Init
 
@@ -16,7 +18,7 @@ The product of this project, `buyer-backlogs.html` resides with Project Chromebo
 
 #### Software Packages
 
-  * `R`
+  * `R 3.5.1` 
   * `pandoc` for `rmarkdown` to `html` conversion
   * `mongodb` for accessing historical PO and REQ data
 
@@ -95,13 +97,15 @@ The roles of the files are as follows:
 | `buyer-backlogs-r` | Yes | Loads most dependencies, generates data for sorting Reqs by age. |
 | `buyer-backlogs.rmd` | Yes | RMarkdown file for rendering, includes graphs and tables definitions. |
 | `buyer-group-definition.r` | No | Defines buyer groups (INV, NINV, etc). Contains buyer names. |
+| `buyer-throughput.rmd` | Yes | RMarkdown file for rendering the buyer throughput table.
 | `data_import_manual.r` | No | Defines input file path, sets input date, and code version. Modify this file for dev/debug. |
 | `data_import.r` | No | Defines input file path, sets input date, and code version. Edited by `data_run.sh` every time upon auto refresh. |
 | `data_run.sh` | Yes | Triggered by data pipe upon auto refresh. Writes updated input file path, input file date, and code version to `data_import.r`. This file then runs `main.r` to generate the `html` output. Takes `mmddyyyy-hhmmss` as first and only parameter. |
 | `main.r` | Yes | Called by `data_run.sh`, generates the `html` output using `buyer-backlogs.rmd`. |
 | `README.md` | Yes | This file |
 | `rubix_getter.r` | Yes | Functions for accessing rubix REQ and PO apis|
-| `time_machine-graphs.r` | Yes | Reads rubix mongodb and generate data for historical trend data for Approver Backlogs and Reqs (`Plain`, `On Hold`, `Out-to-bid` for all and 90 day+ reqs) |
+| `throughput-mongo.r` | Yes | Reads rubix mongodb and generates data for buyer throughput table |
+| `time_machine-graphs.r` | Yes | Reads rubix mongodb and generates data for historical trend data for Approver Backlogs and Reqs (`Plain`, `On Hold`, `Out-to-bid` for all and 90 day+ reqs) |
 | `time_machine-mongo.r` | Yes | Writes to rubix mongodb with current data for Approver Backlogs and Reqs (`Plain`, `On Hold`, `Out-to-bid` for all and 90 day+ reqs) | 
 
 ### Intermediate Files
@@ -118,7 +122,7 @@ These intermediate `json` files are created for loading historical data from rub
 
 ### Output File(s)
 
-This project will export `buyer-backlogs.html` to the directory specified in `main.r`. It will also create a directory called `buyer-backlogs_files/` for all of its dependencies.
+This project will export `buyer-backlogs.html` and `buyer-throughput.html` to the directory specified in `main.r`. Directories named `buyer-backlogs_files/` and `buyer-throughput_files/` will be created alongside with the `html` files to store their dependencies.
 
 ### Call Flow
 
