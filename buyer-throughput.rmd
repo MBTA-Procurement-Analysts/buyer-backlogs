@@ -33,4 +33,4 @@ kable(throughput_lines_tibble) %>%
                        "Sourcing Exec." = throughput_row_num_vec[3]))
 ```
 
-*Counting by PO Creation Date, **but** valiation by Approved, Completed, and Dispatched POs*
+*Counting by PO Creation Date, **but** validation by Pending Approval, Approved, Completed, and Dispatched POs*

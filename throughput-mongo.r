@@ -31,12 +31,13 @@ buyer_cat_fct_throughput <- c("INV", "NINV", "SE")
 mongo_raw_po <- mongo(collection = "PO_DATA", db = db_name, url = db_url)
 
 # Querying every PO of Status "Apprv", "Comp", and "Dispt", that is created
+# Added "Pend Appr" hence below added "PA" status
 #   after 2018-10-15, keeping POID, Date, Buyer, and Lines field.
 mongo_query <- mongo_raw_po$find('{"PO_Date": 
                                     {"$gt": 
                                       {"$date": "2018-10-15T00:00:00Z"}},
                                    "Status": 
-                                    {"$in": ["A", "C", "D"]}}',
+                                    {"$in": ["PA","A", "C", "D"]}}',
                                  fields = '{"PO_No": true, 
                                             "PO_Date": true, 
                                             "Buyer": true, 
