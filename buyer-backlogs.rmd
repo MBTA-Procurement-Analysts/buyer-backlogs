@@ -211,7 +211,23 @@ kable(backlog_kable) %>%
 ## Backlog older than 90 days, By Req Amount
 
 ```{r echo=FALSE}
-backlog_amt_row_num_vec <- as_vector(backlog_amt_kable_col_count[[2]]) + 1
+# int -> int; add 1 to the given int if it is positive.
+# The reason for this function is that, when calculating the # of columns
+#   needed for each buyer category (raw values provided by DF 
+#   backlog_amt_kable_col_count), 1 needs to be added to each category to
+#   include the subtotal row. However, if a category has 0 entries, the code
+#   will error out since the number of rows does not add up (i.e. empty 
+#   categories does not have a subtotal row in the incoming data).
+# This function ensures that 0 will not be incremented when calculating the
+#   number of rows needed.
+# This is not a perfect solution, since the formatting of subtotal rows 
+#   depends on the # of rows data as well. Thus, a unique() is added in the 
+#   subtotal formatting row index calculation. 
+
+plus.one.on.positive <- function(n) 
+  {if (n > 0) {n+1} else {n}}
+
+backlog_amt_row_num_vec <- as_vector(map(as_vector(backlog_amt_kable_col_count[[2]]), plus.one.on.positive))
 kable(backlog_amount_kable) %>% 
   kable_styling() %>% 
   add_header_above(c(" " = 1, "Actionable" = 3, "On Hold" = 1, "Out-to-Bid" = 1, " " = 1)) %>% 
@@ -219,7 +235,7 @@ kable(backlog_amount_kable) %>%
                        "Sourcing Exec." = backlog_amt_row_num_vec[2], 
                        "Inventory" = backlog_amt_row_num_vec[3], 
                        "Total" = 1)) %>% 
-  row_spec(cumsum(backlog_amt_row_num_vec), italic = TRUE, background = "#EEEEEE") %>% 
+  row_spec(unique(cumsum(backlog_amt_row_num_vec)), italic = TRUE, background = "#EEEEEE") %>% 
   row_spec(sum(backlog_amt_row_num_vec) + 1, bold = TRUE)
 ```
 

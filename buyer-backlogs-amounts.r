@@ -32,10 +32,19 @@ backlog_amt_kable_source <- backlog_amt_all_table %>%
   ungroup(Buyer) %>% 
   mutate_at("Buyer", substr, start = 0, stop = 2)
 
+# DF/Tibble -> Tibble; Validate that all buyer categories exist, add 0-value column if not
+validate.90dayplus.amt.kable.buyer.category <- function (data) {
+  data <- if (data %>% filter(Category == "NINV") %>% nrow() == 0) {bind_rows(data, tibble(Category="NINV", "n()"=0))} else {data}
+  data <- if (data %>% filter(Category == "SE") %>% nrow() == 0) {bind_rows(data, tibble(Category="SE", "n()"=0))} else {data}
+  data <- if (data %>% filter(Category == "INV") %>% nrow() == 0) {bind_rows(data, tibble(Category="INV", "n()"=0))} else {data}
+  data
+}
+
 # Categorizes Buyers
 backlog_amt_kable_col_count <- backlog_amt_kable_source %>% 
   group_by(Category) %>% 
   summarise(n()) %>% 
+  validate.90dayplus.amt.kable.buyer.category() %>% 
   mutate_at("Category", ~parse_factor(., levels = buyer_cat_fct)) %>% 
   arrange(Category)
 
