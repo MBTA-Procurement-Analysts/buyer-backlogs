@@ -35,11 +35,32 @@ backlog_cnt_out_to_bid_90dayplus <- backlog_out_to_bid_90dayplus %>%
   group_by(Buyer) %>% 
   summarise(`90+ Out-to-Bid Count` = n())
 
+# DF/Tibble -> Tibble; Adds dummy row buyer for Category if none entry exists 
+#  for such category.
+
+validate.backlog.all.table.category <- function(data) {
+  dummy <- tibble(Category="", Buyer="XX", "90+ Actionable Count"=0, "90+ On Hold Count"=0, "90+ Out-to-Bid Count"=0)
+  data <- if (data %>% filter(Category == "NINV") %>% nrow() == 0) {
+    dummy[1] = "NINV"
+    bind_rows(data, dummy)
+  } else {data}
+  data <- if (data %>% filter(Category == "SE") %>% nrow() == 0) {
+    dummy[1] = "SE"
+    bind_rows(data, dummy)
+  } else {data}
+  data <- if (data %>% filter(Category == "INV") %>% nrow() == 0) {
+    dummy[1] = "INV"
+    bind_rows(data, dummy)
+  } else {data}
+  data
+}
+
 # Combines the counts, and add the buyer categories
 backlog_all_table_90days <- full_join(backlog_cnt_nohold_90dayplus, backlog_cnt_hold_90dayplus, by = "Buyer") %>% 
   full_join(., backlog_cnt_out_to_bid_90dayplus, by = "Buyer") %>% 
   replace(is.na(.), 0) %>% 
   left_join(., buyers_cat, by = "Buyer") %>% 
+  validate.backlog.all.table.category() %>% 
   mutate_at("Category", ~parse_factor(., levels = buyer_cat_fct)) %>% 
   select(Category, everything()) %>% 
   arrange(Category, Buyer)
