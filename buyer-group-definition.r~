@@ -1,0 +1,17 @@
+# buyer-group-definition.r
+# Created by: Mickey Guo
+# Stores the categorizations of usernames,
+#   should not be commited to version control or prod.
+
+sourcing_execs <- tibble(Category = "SE",
+                         Buyer = c("AFLYNN", "TDIONNE","EWELSH", "RWEINER", "JDELALLA","KHALL","JMOYNIHAN"))
+
+inventory_buyers <- tibble(Category = "INV",
+                           Buyer = c("AKNOBEL", "DMARTINOS", "KLOVE", "PHONG", "TSULLIVAN1", "NSEQUEA", "DWELCH"))
+
+non_inventory_buyers <- tibble(Category = "NINV",
+                               Buyer = c("CFRANCIS", "JKIDD", "JLEBBOSSIERE", "TTOUSSAINT","IATHERTON","JMIELE"))
+
+# These buyers should not be included. Filter by !this Category to ignore them.
+ignore_buyers <- tibble(Category = "IGNORE", 
+                        Buyer = c("CDELANO","WRUFFIN","MBERSTEIN","ECOOK"))

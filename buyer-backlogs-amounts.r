@@ -51,7 +51,7 @@ backlog_amt_kable_col_count <- backlog_amt_kable_source %>%
 # Produces the Subtotoal lines (per buyer category) of the 90day+ kable
 backlog_amount_subtotal_kable <- backlog_amt_kable_source %>% 
   group_by(Category) %>% 
-  summarise_at(vars(everything(), -Category, -Buyer), sum) %>% 
+  summarise_at(vars(everything(), -Buyer), sum) %>% 
   mutate(Buyer = "Subtotal") %>% 
   select(Category, Buyer, everything())
 

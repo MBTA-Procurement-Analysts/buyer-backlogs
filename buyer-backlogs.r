@@ -178,7 +178,7 @@ backlog_kable_source <- backlog_all_table %>%
 # Subtotal by category, for Kable output
 backlog_subtotal_kable <- backlog_kable_source %>%
   group_by(Category) %>%
-  summarise_at(vars(everything(), -Category, -Buyer), sum) %>%
+  summarise_at(vars(everything(), -Buyer), sum) %>%
   mutate(Buyer = "Subtotal") %>%
   select(Category, Buyer, everything())
 
