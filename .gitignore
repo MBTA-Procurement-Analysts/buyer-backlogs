@@ -2,6 +2,7 @@
 /.vscode
 .Rhistory
 *.log
+.DS_Store
 
 # inputs and outputs
 /data

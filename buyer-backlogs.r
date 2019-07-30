@@ -21,29 +21,6 @@ library(RColorBrewer)
 # Raw backlog data
 backlog_raw <- readxl::read_excel(backlog_data_path, skip = 1)
 
-# Constant Definitions ----------------------------------------------------
-
-# Buyer Category Definition, now residing in a different file
-source("buyer-group-definition.r")
-
-# Buyer Category Factors, for ordering
-# Note that this factor does not include the "IGNORE" category, and thus 
-#   they should be filtered out before factorizing the Category field.
-buyer_cat_fct <- c("NINV", "SE", "INV")
-
-# Tibble of Buyers and their Categories
-buyers_cat<- bind_rows(sourcing_execs, inventory_buyers, non_inventory_buyers, ignore_buyers)
-
-# Date to be used as Today. Use the dynamic definition unless otherwise needed.
-date_now <- today()
-# date_now <- ymd("2018-09-24")
-
-# FROM date of the filtering
-date_from <- ymd("2000-01-01")
-
-# TO date of the filtering, end of current FY
-date_to <- ymd("2020-06-30")
-
 # (Util) Function Definitions ---------------------------------------------
 
 # Date -> Int; Outputs the FY of the given date
@@ -65,6 +42,38 @@ is.given.fy <- function(givenDate, intGivenFy) {
 na.rm.at <- function(data, colName) {
   data %>% filter(!is.na(!!enquo(colName)))
 }
+
+# Date -> Date; Returns last day of the FY of the given date
+last.fy.day <- function(givenDate) {
+  newdate <- givenDate
+  year(newdate) <- get.fy(givenDate)
+  month(newdate) <- 6
+  day(newdate) <- 30
+  newdate
+}
+
+# Constant Definitions ----------------------------------------------------
+
+# Buyer Category Definition, now residing in a different file
+source("buyer-group-definition.r")
+
+# Buyer Category Factors, for ordering
+# Note that this factor does not include the "IGNORE" category, and thus 
+#   they should be filtered out before factorizing the Category field.
+buyer_cat_fct <- c("NINV", "SE", "INV")
+
+# Tibble of Buyers and their Categories
+buyers_cat<- bind_rows(sourcing_execs, inventory_buyers, non_inventory_buyers, ignore_buyers)
+
+# Date to be used as Today. Use the dynamic definition unless otherwise needed.
+date_now <- today()
+# date_now <- ymd("2018-09-24")
+
+# FROM date of the filtering
+date_from <- ymd("2000-01-01")
+
+# TO date of the filtering, end of current FY
+date_to <- last.fy.day(date_now)
 
 # Data Wrangling ----------------------------------------------------------
 
