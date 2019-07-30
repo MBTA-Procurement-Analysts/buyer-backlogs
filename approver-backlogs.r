@@ -35,8 +35,8 @@ usd <- dollar_format(largest_with_cents = 5000, prefix = "$")
 approval_raw <- approval_raw %>% 
   distinct(`PO No.`, `Line`, .keep_all = TRUE) %>% 
   group_by(`PO No.`) %>% 
-  mutate(`Sum_of_PO_Amt` = sum(`Merch_Amt`)) %>% 
-  select(-Line, -Merch_Amt) %>% 
+  mutate(`Sum_of_PO_Amt` = sum(`Amount`)) %>% 
+  select(-Line, -Amount) %>% 
   distinct(`PO No.`, .keep_all = TRUE) %>% 
   mutate(Age = date_now - date(`Date/Time`)) %>% 
   ungroup(`PO No.`)

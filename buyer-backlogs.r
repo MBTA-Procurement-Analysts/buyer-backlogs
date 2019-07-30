@@ -42,7 +42,7 @@ date_now <- today()
 date_from <- ymd("2000-01-01")
 
 # TO date of the filtering, end of current FY
-date_to <- ymd("2019-06-30")
+date_to <- ymd("2020-06-30")
 
 # (Util) Function Definitions ---------------------------------------------
 
