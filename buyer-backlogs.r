@@ -73,7 +73,8 @@ date_now <- today()
 date_from <- ymd("2000-01-01")
 
 # TO date of the filtering, end of current FY
-date_to <- last.fy.day(date_now)
+date_to <- ymd("2020-06-30")
+#date_to <- last.fy.day(date_now)
 
 # Data Wrangling ----------------------------------------------------------
 
