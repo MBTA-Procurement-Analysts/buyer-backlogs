@@ -43,10 +43,13 @@ na.rm.at <- function(data, colName) {
   data %>% filter(!is.na(!!enquo(colName)))
 }
 
-# Date -> Date; Returns last day of the FY of the given date
+# Date -> Date; Returns last day (yyyy-06-30) of the FY of the given date
+# Note: Day-of-month has to be set to 1 then to 30 to prevent invalid dates
+#         such as (07-31 -> 06-31) to be set. 
 last.fy.day <- function(givenDate) {
   newdate <- givenDate
   year(newdate) <- get.fy(givenDate)
+  day(newdate) <- 1
   month(newdate) <- 6
   day(newdate) <- 30
   newdate
@@ -73,8 +76,10 @@ date_now <- today()
 date_from <- ymd("2000-01-01")
 
 # TO date of the filtering, end of current FY
-date_to <- ymd("2020-06-30")
-#date_to <- last.fy.day(date_now)
+# This field is not used as of 2019-07-31, as filtering with a future date
+#   does not have any effect on current data processing needs.
+# date_to <- ymd("2020-06-30")
+# date_to <- last.fy.day(date_now)
 
 # Data Wrangling ----------------------------------------------------------
 
@@ -86,7 +91,7 @@ backlog_raw <- backlog_raw %>%
   full_join(., buyers_cat, by = "Buyer") %>%
   na.rm.at(Buyer) %>%
   na.rm.at(Category) %>%
-  filter(`Date of Approval` >= date_from & `Date of Approval` <= date_to) %>%
+  filter(`Date of Approval` >= date_from) %>%
   mutate_at("Category", ~parse_factor(., levels = buyer_cat_fct))
 
 # Split on hold from non-hold ones
