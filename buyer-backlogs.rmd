@@ -87,9 +87,14 @@ backlog_plot_se <- backlog_plot %>%
          barmode = 'stack')
 
 
-# Filtering out buyer KL. See comment around L112.
+# On 2019-09-06, a request was made to filter out buyer KL. 
+# Consequent code changes had been made to filter this buyer out with a
+#   description below the plot.
+# On 2019-10-03, a request was made to remove the changes so that the buyer
+#   will re-appear in the plot. Thus, previous changes has been removed. 
+#   see previous commits (on 'ohio' branch) for code.
 backlog_plot_inv <- backlog_plot %>% 
-  filter(Category == "INV" & Buyer != "KL") %>% 
+  filter(Category == "INV") %>% 
   plot_ly() %>% 
   add_bars(y = ~Buyer,
           x = ~Count,
@@ -108,14 +113,7 @@ subplot(backlog_plot_ninv, backlog_plot_se, backlog_plot_inv, nrows = 3, margin 
   # No controls around the plot, to be mobile friendly
   config(displayModeBar = FALSE) %>% 
   layout(title = "All Reqs")
-
-# KL Info, requested to be removed from the graphs due to constant out-lying.
-kl_count_table = backlog_plot %>% filter(Buyer == "KL")
-kl_actionable_count = (kl_count_table %>% filter(Type == "Actionable") %>% select(Count))[[1]]
-kl_out_to_bid_count = (kl_count_table %>% filter(Type == "Out-To-Bid") %>% select(Count))[[1]]
-kl_on_hold_count = (kl_count_table %>% filter(Type == "On Hold") %>% select(Count))[[1]]
 ```
-*Buyer KL Info: Actionable `r kl_actionable_count`, On Hold `r kl_on_hold_count`, Out-To-Bid `r kl_out_to_bid_count`.*
 
 *Omitted buyer(s) with no backlogs: `r paste(hidden_buyers)`.*
 
