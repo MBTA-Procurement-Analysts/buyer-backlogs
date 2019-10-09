@@ -16,15 +16,21 @@ library(lubridate)
 # Detects current system, assumes localbox or ohio if running on linux, 
 #   otherwise use local box IP
 db_url <- if (Sys.info()[[1]] == "Linux") {"mongodb://127.0.0.1:27017"} else {"mongodb://10.108.198.117:27017"}
-environment <- "prod"
+db_environment <- "prod"
 serverlocation <- Sys.getenv("RUBIXLOCATION")
 #serverlocation <- "local"
 
 # Constructs DB name
-db_name <- paste("rubix", serverlocation, environment, sep = "-", collapse = "")
+db_name <- paste("rubix", serverlocation, db_environment, sep = "-", collapse = "")
 
 # Buyer Category Order to use in this report
 buyer_cat_fct_throughput <- c("INV", "NINV", "SE")
+
+# For standalone debug so knitr has it
+
+#data_date <- ymd_hms("2019-10-09 09:54:01")
+#source("buyer-group-definition.r")
+#buyers_cat<- bind_rows(sourcing_execs, inventory_buyers, non_inventory_buyers, ignore_buyers)
 
 # Mongodb Connection and Query --------------------------------------------
 
@@ -69,10 +75,12 @@ buyer.category.buyer.names <- function(data) {
 }
 
 # Changes datetimes to dates, and adds the week date
+# Change 2019-10-08: Now this page only tracks 3 months of data.
 mongo_po_tibble <- mongo_po_tibble %>% 
+  filter(PO_Date >= (data_date - months(3))) %>% 
   mutate_at("PO_Date", date) %>% 
   mutate(`WeekNo` = date.of.week(`PO_Date`)) %>% 
-  mutate_at("WeekNo", ~format(., "%m/%d"))
+  mutate_at("WeekNo", ~format(., "%m/%d/%y"))
 
 # PO Count by Buyer and by Week, ignores "IGNORE" buyers
 throughput_hdr_tibble <- mongo_po_tibble %>% 
