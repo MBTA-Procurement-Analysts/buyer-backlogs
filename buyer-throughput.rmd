@@ -4,11 +4,22 @@ output:
     self_contained: false
 ---
 
-```{r include=FALSE, warning=FALSE}
+```{r, buyer-throughput-source, include=FALSE, warning=FALSE}
 source("./throughput-mongo.r")
 ```
 
+```{r, approver-throughput-source, include=FALSE, warning=FALSE}
+source("./approver-throughput.r")
+```
+
 # Throughput Report of `r data_date`
+
+## Compliance Throughput
+
+```{r, approver-throughput-table, echo=FALSE}
+kable(approval_historical_tibble) %>% 
+  kable_styling()
+```
 
 ## PO Count
 

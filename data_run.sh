@@ -12,6 +12,7 @@ echo "# Gather variables for data import in one place" >> ./data_import.r
 
 echo "backlog_data_path <- '/home/ubuntu/Projects/buyer-backlogs/data/ductpipe/$1/BACKLOG-$1.xlsx'" >> ./data_import.r
 echo "approver_data_path <- '/home/ubuntu/Projects/buyer-backlogs/data/ductpipe/$1/APPROVER-BACKLOG-$1.xlsx'" >> ./data_import.r
+echo "approver_historical_data_path <- '/home/ubuntu/Projects/buyer-backlogs/data/ductpipe/$1/APPROVER-BACKLOG-HISTORICAL-$1.xlsx'" >> ./data_import.r
 
 echo "data_date <- now('America/New_York')" >> ./data_import.r
 echo "print('Data Import Completed.')" >> ./data_import.r
