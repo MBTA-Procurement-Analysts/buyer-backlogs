@@ -12,14 +12,14 @@ db_url <- if (Sys.info()[[1]] == "Linux") {"mongodb://127.0.0.1:27017"} else {"m
 
 # Approver Worklist Table -------------------------------------------------
 
-mongo_approval_worklist <- mongo(collection = "timemachine_pp_worklist", db = "test", url = db_url)
+mongo_approver_worklist <- mongo(collection = "timemachine_pp_worklist", db = "test", url = db_url)
 
 # Adds archive time and cast Age to int since mongolite can't handle date interval objs
-approval_worklist_timemachine <- approval_raw %>% 
+approver_worklist_timemachine <- approver_raw %>% 
   mutate_at("Age", as.integer) %>% 
   mutate(Archive_Time = data_date)
 
-mongo_approval_worklist$insert(approval_worklist_timemachine)
+mongo_approver_worklist$insert(approver_worklist_timemachine)
 
 # Backlog Table -----------------------------------------------------------
 

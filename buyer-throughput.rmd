@@ -17,7 +17,7 @@ source("./approver-throughput.r")
 ## Compliance Throughput
 
 ```{r, approver-throughput-table, echo=FALSE}
-kable(approval_historical_tibble) %>% 
+kable(approver_historical_tibble) %>% 
   kable_styling()
 ```
 

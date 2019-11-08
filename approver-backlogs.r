@@ -12,7 +12,7 @@ library(scales)
 # source functions that gets rubixs data
 source("./rubix_getter.r")
 
-approval_raw <- readxl::read_excel(approver_data_path, skip = 1)
+approver_raw <- readxl::read_excel(approver_data_path, skip = 1)
 
 # Function Definition -----------------------------------------------------
 
@@ -26,13 +26,13 @@ usd <- dollar_format(largest_with_cents = 5000, prefix = "$")
 #   categorization of <$50K is affected. 
 # This function is left here for future references.
 
-# approval_raw <- approval_raw %>% 
+# approver_raw <- approver_raw %>% 
 #   distinct(`PO No.`, .keep_all = TRUE) %>% 
 #   mutate(Age = date_now - date(`Date/Time`))
 
 # Deduped since upstream query returns duplicate data
 
-approval_raw <- approval_raw %>% 
+approver_raw <- approver_raw %>% 
   distinct(`PO No.`, `Line`, `Amount`, .keep_all = TRUE) %>% 
   group_by(`PO No.`) %>% 
   mutate(`Sum_of_PO_Amt` = sum(`Amount`)) %>% 
@@ -84,7 +84,7 @@ validate.approver.cnt.bins.hard <- function(data) {
 }
 
 # Applies Age binning to approver backlogs
-approver_cnt_bins <- approval_raw %>% 
+approver_cnt_bins <- approver_raw %>% 
   approver.age.binning.hard() %>% 
   approver.bin.counts.hard() %>%
   validate.approver.cnt.bins.hard() %>%
@@ -93,7 +93,7 @@ approver_cnt_bins <- approval_raw %>%
   rename(`0 to 7` = `0`, `7 to 14` = `7`, `14 to 30` = `14`, `30+` = `30`)
 
 # Applies Age binning to approver backlogs
-approver_amt_bins <- approval_raw %>% 
+approver_amt_bins <- approver_raw %>% 
   approver.amount.binning.hard() %>% 
   approver.bin.counts.hard() %>% 
   validate.approver.amt.bins.hard() %>%
@@ -102,13 +102,13 @@ approver_amt_bins <- approval_raw %>%
   rename(`< $50k` = `0`, `$50k to $250k` = `50000`, `$250k to $500k` = `250000`, `$500k+` = `5e+05`)
 
 # Kable for Approver Overview Table, with Age bins and Amount bins, and totals
-approval_kable <- bind_cols(approver_cnt_bins, approver_amt_bins) %>% 
+approver_kable <- bind_cols(approver_cnt_bins, approver_amt_bins) %>% 
   mutate(Total = `0 to 7` + `7 to 14` + `14 to 30` + `30+`)
 
 # PO side of the Approver backlog detailed table.
 # (PO No., Amount, Worklist Age)
 # Note that the detailed table only shows entries over $50k
-approval_detail_table_po <- approval_raw %>% 
+approver_detail_table_po <- approver_raw %>% 
   filter(`Sum_of_PO_Amt` >= 50000) %>% 
   rename(`Worklist Time` = `Date/Time`, `Amount` = `Sum_of_PO_Amt`, `Worklist Age` = `Age`) %>% 
   mutate_at("Amount", usd) %>% 
@@ -117,7 +117,7 @@ approval_detail_table_po <- approval_raw %>%
 # Req size of the Approver backlog detailed table.
 # (Line 1 Description, Buyer, Approval Date)
 # Note that the detailed table only shows entries over $50k
-approval_detail_table_req <- approval_raw %>%
+approver_detail_table_req <- approver_raw %>%
   filter(`Sum_of_PO_Amt` >= 50000) %>% 
   select(`PO No.`) %>%
   as_vector() %>%
@@ -127,14 +127,14 @@ approval_detail_table_req <- approval_raw %>%
 
 # Combines the Req and PO size of the detailed table, calculates the Req age,
 #   then puts it at the front and sort by it.
-approval_detail_table <- bind_cols(approval_detail_table_po, approval_detail_table_req) %>% 
+approver_detail_table <- bind_cols(approver_detail_table_po, approver_detail_table_req) %>% 
   mutate(`Overall Age` = date_now - `Req Approval Date` ) %>% 
   select(`Overall Age`, everything(), -`Req Approval Date`) %>% 
   arrange(desc(`Overall Age`))
 
 # Number of entries that the detail table (>= $50k) have
-approval_detail_count <- count(approval_detail_table)
+approver_detail_count <- count(approver_detail_table)
 
 # Total number of entries that the approver have, to calculate the # of omitted
 #   entries from the detail table.
-approval_total_count <-count(approval_raw)
+approver_total_count <-count(approver_raw)

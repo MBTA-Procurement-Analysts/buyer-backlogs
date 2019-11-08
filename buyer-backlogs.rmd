@@ -177,7 +177,7 @@ subplot(backlog_plot_90dayplus_ninv, backlog_plot_90dayplus_se, backlog_plot_90d
 # Grouping By Dollar Amount: <$50k, $50k to $250k, $250k to $500k, $500k+
 # Total # of backlog entries
 # Since the bins rarely change, the group header is added by hard-coding the # of columns.
-kable(approval_kable) %>% 
+kable(approver_kable) %>% 
   kable_styling() %>% 
   add_header_above(c("Grouping By Age (Days)" = 4, "Grouping By Dollar Amount" = 4, " " = 1)) %>% 
   column_spec(9, bold = TRUE) %>% 
@@ -186,12 +186,12 @@ kable(approval_kable) %>%
 
 <P style="page-break-before: always">
 
-### PP's Worklist Details (`r approval_detail_count`)
+### PP's Worklist Details (`r approver_detail_count`)
 
-*Omitted `r (approval_total_count - approval_detail_count)` entries less than $50,000.*
+*Omitted `r (approver_total_count - approver_detail_count)` entries less than $50,000.*
 
 ```{r echo=FALSE}
-kable(approval_detail_table)%>% 
+kable(approver_detail_table)%>% 
   kable_styling() %>% 
   add_header_above(c(" " = 1, "Worklist Data" = 3,"Req Details" = 2))
 ```
@@ -249,7 +249,7 @@ kable(backlog_amount_kable) %>%
 
 ## PP's Worklist Trend
 ```{r echo=FALSE, warning=FALSE, out.width="100%", out.height="400px", eval = use_time_machine}
-plot_ly(data = approval_worklist_timemachine) %>% 
+plot_ly(data = approver_worklist_timemachine) %>% 
   add_lines(x = ~Archive_Time, 
             y = ~Cnt, 
             name = "PP's List (> $50K)") %>% 

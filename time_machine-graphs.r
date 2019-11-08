@@ -16,22 +16,22 @@ db_url <- if (Sys.info()[[1]] == "Linux") {"mongodb://127.0.0.1:27017"} else {"m
 # Approver Backlog Graphs -------------------------------------------------
 
 # Re-using connections, see notes around L41 in this file. 
-# mongo_approval_worklist <- mongo(collection = "timemachine_pp_worklist", db = "test", url = db_url)
+# mongo_approver_worklist <- mongo(collection = "timemachine_pp_worklist", db = "test", url = db_url)
 
 # Export to temp file
-mongo_approval_worklist$export(file("approval_worklist_timemachine.json"))
+mongo_approver_worklist$export(file("approver_worklist_timemachine.json"))
 
 # Read temp file as Dataframe
-approval_worklist_timemachine_json <- stream_in(file("approval_worklist_timemachine.json"))
+approver_worklist_timemachine_json <- stream_in(file("approver_worklist_timemachine.json"))
 
 # Slice mongodb id off and tibble conversion, since ObjectID is of a type 
 #   as_tibble can't handle
-approval_worklist_timemachine <- as_tibble(approval_worklist_timemachine_json[2:11])
+approver_worklist_timemachine <- as_tibble(approver_worklist_timemachine_json[2:11])
 
 # New Function of Wrangling Approver Backlog:
 # This function simply filters non-PP (<$50k) entries, per discussion of the 
 #   total amount of backlogs being no longer necessary.
-approval_worklist_timemachine <- approval_worklist_timemachine %>% 
+approver_worklist_timemachine <- approver_worklist_timemachine %>% 
   filter(Sum_of_PO_Amt >= 50000) %>% 
   group_by(Archive_Time) %>% 
   summarize(Cnt = n()) 
