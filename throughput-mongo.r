@@ -94,7 +94,7 @@ throughput_hdr_tibble <- mongo_po_tibble %>%
   select(Buyer, `WeekNo`, `Cnt`) %>% 
   spread(`WeekNo`, `Cnt`) %>% 
   replace(is.na(.), 0) %>% 
-  select(-c(1)) %>% 
+  select(-c(2)) %>% 
   buyer.category.buyer.names()
 
 # PO Line Count by Buyer and by Week, ignores "IGNORE" buyers
@@ -106,7 +106,7 @@ throughput_lines_tibble <- mongo_po_tibble %>%
   select(Buyer, `WeekNo`, `LineSum`) %>% 
   spread(`WeekNo`, `LineSum`) %>% 
   replace(is.na(.), 0) %>% 
-  select(-c(1)) %>% 
+  select(-c(2)) %>% 
   buyer.category.buyer.names()
 
 # Number of Rows per category, for auto-adjusting groups labels for the kable.
