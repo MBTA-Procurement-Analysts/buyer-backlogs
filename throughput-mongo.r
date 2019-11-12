@@ -77,12 +77,16 @@ buyer.category.buyer.names <- function(data) {
 # Changes datetimes to dates, and adds the week date
 # Change 2019-10-08: Now this page only tracks 3 months of data.
 mongo_po_tibble <- mongo_po_tibble %>% 
-  filter(PO_Date >= (data_date - months(3))) %>% 
+  filter(PO_Date >= (data_date - weeks(13))) %>% 
   mutate_at("PO_Date", date) %>% 
   mutate(`WeekNo` = date.of.week(`PO_Date`)) %>% 
   mutate_at("WeekNo", ~format(., "%m/%d/%y"))
 
 # PO Count by Buyer and by Week, ignores "IGNORE" buyers
+# Last select() call is for dropping the first week (column).
+# Since in upstream the data is filtered by weeks from data date (today), the
+#   first week will likely contain impartial data, making the counts of POs
+#   for that week inaccurate. Thus is it dropped.
 throughput_hdr_tibble <- mongo_po_tibble %>% 
   group_by(`Buyer`, `WeekNo`) %>% 
   summarise(Cnt = n()) %>% 
@@ -90,6 +94,7 @@ throughput_hdr_tibble <- mongo_po_tibble %>%
   select(Buyer, `WeekNo`, `Cnt`) %>% 
   spread(`WeekNo`, `Cnt`) %>% 
   replace(is.na(.), 0) %>% 
+  select(-c(1)) %>% 
   buyer.category.buyer.names()
 
 # PO Line Count by Buyer and by Week, ignores "IGNORE" buyers
@@ -101,6 +106,7 @@ throughput_lines_tibble <- mongo_po_tibble %>%
   select(Buyer, `WeekNo`, `LineSum`) %>% 
   spread(`WeekNo`, `LineSum`) %>% 
   replace(is.na(.), 0) %>% 
+  select(-c(1)) %>% 
   buyer.category.buyer.names()
 
 # Number of Rows per category, for auto-adjusting groups labels for the kable.

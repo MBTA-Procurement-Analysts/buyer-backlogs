@@ -14,7 +14,7 @@ source("./approver-throughput.r")
 
 # Throughput Report of `r data_date`
 
-## Compliance Throughput
+## Compliance Worked* Count
 
 ```{r, approver-throughput-table, echo=FALSE}
 kable(approver_historical_tibble) %>% 
@@ -44,4 +44,6 @@ kable(throughput_lines_tibble) %>%
                        "Sourcing Exec." = throughput_row_num_vec[3]))
 ```
 
-*Counting by PO Creation Date, **but** validation by Pending Approval, Approved, Completed, and Dispatched POs*
+* *'Worked'* does not necessarily means 'Completed'. It might be in a 'drafts' state. 
+Complicance Amount is calculated by summing PO lines that 1) is the largest for that line number (handles future-year $0 amounts), and 2) is the latest in terms of time when there are multiple Buyers (handles buyer handover).
+Counting by PO Creation Date, **but** validation by Pending Approval, Approved, Completed, and Dispatched POs.

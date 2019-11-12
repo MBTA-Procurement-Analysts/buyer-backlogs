@@ -29,7 +29,7 @@ approver_historical_data_raw <- read_excel(approver_historical_data_path, skip =
 
 approver_historical_data_all <- approver_historical_data_raw %>% 
   select(-User, -Available_DTTM, -Unit, -Origin, -Instance, -Selected_DTTM) %>% 
-  filter(`Worked_DTTM` >= (data_date - months(3)), Status == 2) %>% 
+  filter(`Worked_DTTM` >= (data_date - weeks(13)), Status == 2) %>% 
   group_by_at(vars(everything(), -Amount)) %>% 
   summarise(Max_Amount = max(Amount)) %>% 
   ungroup() %>% 
@@ -54,17 +54,23 @@ approver_historical_data_over50k <- approver_historical_data_all %>%
   filter(Total_Amount > 500000)
 
 
+# Last select() call is for dropping the first week (column).
+# Since in upstream the data is filtered by weeks from data date (today), the
+#   first week will likely contain impartial data, making the counts of POs
+#   for that week inaccurate. Thus is it dropped.
 approver_historical_tibble_all <- approver_historical_data_all %>%
   group_by(WeekNo) %>%
   summarize(Cnt = n()) %>% 
   spread(`WeekNo`, `Cnt`) %>% 
-  replace(is.na(.), 0)
+  replace(is.na(.), 0) %>% 
+  select(-c(1))
 
 approver_historical_tibble_over50k <- approver_historical_data_over50k %>% 
   group_by(WeekNo) %>%
   summarize(Cnt = n()) %>% 
   spread(`WeekNo`, `Cnt`) %>% 
-  replace(is.na(.), 0)
+  replace(is.na(.), 0) %>% 
+  select(-c(1))
 
 approver_historical_tibble <- 
   bind_rows(approver_historical_tibble_all, approver_historical_tibble_over50k) %>% 
