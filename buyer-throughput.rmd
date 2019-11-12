@@ -44,7 +44,7 @@ kable(throughput_lines_tibble) %>%
                        "Sourcing Exec." = throughput_row_num_vec[3]))
 ```
 
-* *'Worked'* does not necessarily means 'Completed'. It might be in a 'drafts' state. 
+*'Worked'* does not necessarily means 'Completed'. It might be in a 'drafts' state. 
 
 Complicance Amount is calculated by summing PO lines that 1) is the largest for that line number (handles future-year $0 amounts), and 2) is the latest in terms of time when there are multiple Buyers (handles buyer handover).
 
