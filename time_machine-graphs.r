@@ -26,7 +26,12 @@ approver_worklist_timemachine_json <- stream_in(file("approver_worklist_timemach
 
 # Slice mongodb id off and tibble conversion, since ObjectID is of a type 
 #   as_tibble can't handle
-approver_worklist_timemachine <- as_tibble(approver_worklist_timemachine_json[2:11])
+
+# On 2019-11-21, this step is modified to use "select()" instead of index
+#   slicing to ensure correctness across R/package versions.
+approver_worklist_timemachine <- approver_worklist_timemachine_json %>%
+  as_tibble() %>%
+  select(-"_id", -"More Info")
 
 # New Function of Wrangling Approver Backlog:
 # This function simply filters non-PP (<$50k) entries, per discussion of the 
