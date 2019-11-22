@@ -193,7 +193,7 @@ kable(approver_kable) %>%
 ```{r echo=FALSE}
 kable(approver_detail_table)%>% 
   kable_styling() %>% 
-  add_header_above(c(" " = 1, "Worklist Data" = 3,"Req Details" = 2))
+  add_header_above(c("Worklist Data" = 3,"Req Details" = 3))
 ```
 <P style="page-break-before: always">
 

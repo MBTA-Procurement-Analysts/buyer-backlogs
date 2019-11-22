@@ -129,8 +129,8 @@ approver_detail_table_req <- approver_raw %>%
 #   then puts it at the front and sort by it.
 approver_detail_table <- bind_cols(approver_detail_table_po, approver_detail_table_req) %>% 
   mutate(`Overall Age` = date_now - `Req Approval Date` ) %>% 
-  select(`Overall Age`, everything(), -`Req Approval Date`) %>% 
-  arrange(desc(`Overall Age`))
+  select(`Worklist Age`, `Amount`, `PO No.`, `Overall Age`, everything(), -`Req Approval Date`) %>%
+  arrange(desc(`Worklist Age`))
 
 # Number of entries that the detail table (>= $50k) have
 approver_detail_count <- count(approver_detail_table)
